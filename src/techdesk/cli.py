@@ -1,5 +1,5 @@
-from collections.abc import Callable
 import argparse
+import collections.abc
 import logging
 import platform
 import sys
@@ -147,7 +147,7 @@ def _show_menu() -> None:
     print("\n  [ 0] Encerrar TECH DESK")
 
 
-def _menu(input_fn: Callable[[str], str] = input) -> int:
+def _menu(input_fn: collections.abc.Callable[[str], str] = input) -> int:
     actions = {
         number: (label, topic)
         for entries in MENU_GROUPS.values()
