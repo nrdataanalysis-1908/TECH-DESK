@@ -11,7 +11,6 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 
-
 MAX_DOWNLOAD_BYTES = 100 * 1024 * 1024
 EVENT_LOGS = ("Application", "System", "Setup", "Security")
 

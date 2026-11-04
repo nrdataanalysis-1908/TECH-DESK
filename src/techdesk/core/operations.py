@@ -7,7 +7,6 @@ import logging
 import platform
 import subprocess
 import tempfile
-
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
