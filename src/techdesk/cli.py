@@ -26,48 +26,43 @@ GREEN = "\033[92m"
 RESET = "\033[0m"
 
 MENU_GROUPS = {
-    "01  |  DIAGNÓSTICO DO SISTEMA": [
-        ("1", "Resumo do sistema", "sistema"),
-        ("2", "Processador e memória", "sistema"),
-        ("3", "Armazenamento", "armazenamento"),
-        ("4", "Tempo ligado (uptime)", "uptime"),
-        ("5", "Variáveis de ambiente", "environment"),
+    "01  |  EXECUÇÃO E MANUTENÇÃO": [
+        ("1", "Limpar cache DNS", "operation:flush_dns"),
+        ("2", "Limpar arquivos temporários antigos", "operation:cleanup_temp"),
+        ("3", "Esvaziar Lixeira", "operation:empty_recycle_bin"),
+        ("4", "Reiniciar Windows Explorer", "operation:restart_explorer"),
+        ("5", "Reconstruir cache de miniaturas", "operation:clear_thumbnail_cache"),
+        ("6", "Renovar endereço IP (DHCP)", "operation:renew_ip"),
+        ("7", "Limpar cache ARP", "operation:flush_arp"),
+        ("8", "Reiniciar serviço de impressão", "operation:restart_spooler"),
+        ("9", "Esvaziar fila de impressão", "operation:clear_print_queue"),
+        ("10", "Reiniciar serviço de áudio", "operation:restart_audio"),
+        ("11", "Atualizar assinaturas do Defender", "operation:update_defender_signatures"),
+        ("12", "Executar verificação rápida do Defender", "operation:quick_defender_scan"),
+        ("13", "Reiniciar serviço Windows Update", "operation:restart_windows_update"),
+        ("14", "Criar ponto de restauração", "operation:create_restore_point"),
+        ("15", "Verificar unidade do Windows (CHKDSK)", "operation:check_disk"),
+        ("16", "Redefinir catálogo Winsock", "operation:reset_winsock"),
+        ("17", "Verificar e reparar arquivos do Windows (SFC)", "operation:sfc_scan"),
+        ("18", "Reparar imagem do Windows (DISM)", "operation:dism_restore"),
     ],
-    "02  |  REDE E CONECTIVIDADE": [
-        ("6", "Configuração IP completa", "ipconfig"),
-        ("7", "Servidores DNS", "dns"),
-        ("8", "Gateway padrão", "gateway"),
-        ("9", "Adaptadores de rede", "adapters"),
-        ("10", "Conexões TCP ativas", "connections"),
-        ("11", "Tabela de rotas", "routes"),
-        ("12", "Tabela ARP", "arp"),
-        ("13", "Teste de conectividade", "connectivity"),
+    "02  |  DIAGNÓSTICO DO SISTEMA": [
+        ("19", "Resumo do sistema", "sistema"),
+        ("20", "Processador e memória", "sistema"),
+        ("21", "Armazenamento", "armazenamento"),
+        ("22", "Tempo ligado (uptime)", "uptime"),
+        ("27", "Processos em execução", "processes"),
+        ("28", "Serviços do Windows", "services"),
     ],
-    "03  |  HARDWARE E DISPOSITIVOS": [
-        ("14", "Bateria", "battery"),
-        ("15", "Dispositivos USB", "usb"),
-        ("16", "Impressoras", "printers"),
+    "03  |  REDE E CONECTIVIDADE": [
+        ("23", "Configuração IP completa", "ipconfig"),
+        ("24", "Servidores DNS", "dns"),
+        ("25", "Adaptadores de rede", "adapters"),
+        ("26", "Teste de conectividade", "connectivity"),
     ],
-    "04  |  PROCESSOS E SERVIÇOS": [
-        ("17", "Processos em execução", "processes"),
-        ("18", "Serviços do Windows", "services"),
-        ("19", "Programas na inicialização", "startup"),
-        ("20", "Tarefas agendadas", "tasks"),
-    ],
-    "05  |  SEGURANÇA E AUDITORIA": [
-        ("21", "Status do Firewall", "firewall"),
-        ("22", "Status do Microsoft Defender", "defender"),
-        ("23", "Atualizações instaladas", "updates"),
-        ("24", "Eventos críticos do sistema", "events"),
-        ("25", "Contas locais", "users"),
-        ("26", "Softwares instalados", "software"),
-    ],
-    "06  |  EXECUÇÃO E MANUTENÇÃO": [
-        ("27", "Limpar cache DNS", "operation:flush_dns"),
-        ("28", "Limpar arquivos temporários antigos", "operation:cleanup_temp"),
-        ("29", "Reiniciar serviço de impressão", "operation:restart_spooler"),
-        ("30", "Verificar e reparar arquivos do Windows (SFC)", "operation:sfc_scan"),
-        ("31", "Reparar imagem do Windows (DISM)", "operation:dism_restore"),
+    "04  |  SEGURANÇA": [
+        ("29", "Status do Firewall", "firewall"),
+        ("30", "Status do Microsoft Defender", "defender"),
     ],
 }
 
@@ -109,6 +104,11 @@ def build_parser() -> argparse.ArgumentParser:
         "--diagnostics",
         action="store_true",
         help="coleta e exibe diagnóstico local somente para leitura",
+    )
+    parser.add_argument(
+        "--diagnostic",
+        choices=sorted(WINDOWS_DIAGNOSTICS),
+        help="executa uma consulta Windows específica, somente para leitura",
     )
     return parser
 
@@ -260,6 +260,9 @@ def main() -> int:
     print(f"TECH DESK | NR TECH — {platform.system()} {platform.release()}")
     if args.diagnostics:
         _show_diagnostics()
+        return 0
+    if args.diagnostic:
+        print(run_windows_diagnostic(args.diagnostic))
         return 0
     return _menu()
 
