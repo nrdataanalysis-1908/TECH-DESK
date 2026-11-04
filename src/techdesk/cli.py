@@ -183,47 +183,64 @@ def _menu(input_fn: Callable[[str], str] = input) -> int:
         elif topic.startswith("operation:"):
             operation_key = topic.split(":", 1)[1]
             operation = OPERATIONS[operation_key]
-            print("\n" + _paint("CONFIRMAÇÃO DE OPERAÇÃO", YELLOW))
-            print(f"  Ação: {operation.title}")
-            print(f"  Risco: {operation.risk}")
-            print(f"  Detalhes: {operation.description}")
+            print("\\n" + "=" * 68)
+            print(_paint(f" CENTRAL DE EXECUÇÃO | {operation.title.upper()}", BLUE))
+            print("=" * 68)
+            print(f" Ação             : {operation.title}")
+            print(f" Nível de risco   : {operation.risk}")
+            print(f" Privilégio       : {'Administrador' if operation.requires_admin else 'Usuário padrão'}")
+            print(f" O que será feito : {operation.description}")
             if operation_key == "cleanup_temp":
                 count, size = preview_temp_cleanup()
-                print(f"  Prévia: {count} arquivo(s), {size / (1024**2):.2f} MiB elegíveis.")
+                print(f" Prévia           : {count} arquivo(s), {size / (1024**2):.2f} MiB elegíveis")
+            print("-" * 68)
+            print(" Para executar, digite SIM. Qualquer outra resposta cancela.")
             try:
-                answer = input_fn("Digite SIM para executar: ").strip().upper()
+                answer = input_fn(" Confirmação: ").strip().upper()
             except (EOFError, KeyboardInterrupt):
-                print("\nOperação cancelada.", flush=True)
-                continue
-            if answer != "SIM":
-                result = execute_operation(
-                    operation_key,
-                    confirm=lambda _: False,
-                )
-                print(_paint(result.message, YELLOW), flush=True)
+                print("\\n Operação cancelada.", flush=True)
                 continue
 
-            print(_paint("\\nExecutando operação... aguarde.", YELLOW), flush=True)
+            if answer != "SIM":
+                execute_operation(operation_key, confirm=lambda _: False)
+                print(_paint("\\n STATUS: CANCELADA — nenhuma ação foi executada.", YELLOW), flush=True)
+                try:
+                    input_fn("\\nPressione ENTER para retornar ao menu...")
+                except (EOFError, KeyboardInterrupt):
+                    pass
+                continue
+
+            print("\\n" + "=" * 68, flush=True)
+            print(_paint(" EXECUTANDO OPERAÇÃO — NÃO FECHE ESTA JANELA", YELLOW), flush=True)
+            print("=" * 68, flush=True)
             try:
-                result = execute_operation(
-                    operation_key,
-                    confirm=lambda _: True,
-                )
+                result = execute_operation(operation_key, confirm=lambda _: True)
             except Exception:
                 logging.getLogger("techdesk").exception(
                     "Falha inesperada ao executar a operação %s", operation_key
                 )
-                print(_paint(
-                    "Falha inesperada. Consulte o log do TECH DESK.",
-                    YELLOW,
-                ), flush=True)
+                print(_paint("\\n STATUS: ERRO INTERNO — consulte o log do TECH DESK.", YELLOW), flush=True)
+                try:
+                    input_fn("\\nPressione ENTER para retornar ao menu...")
+                except (EOFError, KeyboardInterrupt):
+                    pass
                 continue
 
-            print(_paint(result.message, CYAN if result.success else YELLOW), flush=True)
+            print("\\n" + "=" * 68)
+            if result.success:
+                print(_paint(" STATUS FINAL: EXECUÇÃO CONCLUÍDA", GREEN))
+            else:
+                print(_paint(" STATUS FINAL: FALHA NA EXECUÇÃO", YELLOW))
+            print(f" Resultado: {result.message}")
+            print("-" * 68)
             if result.output:
-                print(result.output, flush=True)
+                print(" SAÍDA DO COMANDO:")
+                print(result.output)
+            else:
+                print(" SAÍDA DO COMANDO: o Windows não retornou texto.")
+            print("=" * 68, flush=True)
             try:
-                input_fn("\\nPressione ENTER para voltar ao menu...")
+                input_fn("\\nPressione ENTER para retornar ao menu...")
             except (EOFError, KeyboardInterrupt):
                 pass
         elif topic in WINDOWS_DIAGNOSTICS:
