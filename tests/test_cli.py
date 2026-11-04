@@ -1,20 +1,16 @@
 from techdesk.cli import MENU_GROUPS
 
 
-def test_menu_prioritizes_executable_operations():
-    entries = [entry for group in MENU_GROUPS.values() for entry in group]
-    executable = [entry for entry in entries if entry[2].startswith("operation:")]
-    consultations = [entry for entry in entries if not entry[2].startswith("operation:")]
-    assert len(executable) == 22
-    assert len(consultations) == 27
-    assert len(entries) == 49
+def test_menu_has_14_core_support_tools():
+    core = MENU_GROUPS["01  |  PAINEL DE SUPORTE TÉCNICO"]
+    assert len(core) == 14
+    assert core[0][1] == "Limpeza de arquivos temporários"
+    assert core[2][1] == "Verificação de arquivos do sistema (SFC)"
+    assert core[3][1] == "Reparo da imagem do Windows (DISM)"
+    assert core[13][1] == "Ver status dos principais serviços"
 
 
 def test_menu_numbers_are_unique_and_sequential():
-    numbers = [
-        int(number)
-        for group in MENU_GROUPS.values()
-        for number, _, _ in group
-    ]
-    assert sorted(numbers) == list(range(1, 50))
+    numbers = [int(number) for group in MENU_GROUPS.values() for number, _, _ in group]
+    assert sorted(numbers) == list(range(1, 36))
     assert len(numbers) == len(set(numbers))
