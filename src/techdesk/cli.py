@@ -16,7 +16,9 @@ from techdesk.core.operations import (
     OPERATIONS,
     execute_operation,
     preview_temp_cleanup,
-)\n\nCYAN = "\033[96m"
+)
+
+CYAN = "\033[96m"
 BLUE = "\033[94m"
 YELLOW = "\033[93m"
 GREEN = "\033[92m"
