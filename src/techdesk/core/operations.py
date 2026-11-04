@@ -29,7 +29,7 @@ OPERATIONS = {
     "flush_dns": Operation(
         "flush_dns", "Limpar cache DNS",
         "Descarta o cache DNS local; novas consultas serão resolvidas novamente.",
-        "L1 — baixo impacto", False, 30,
+        "L1 — baixo impacto", True, 30,
     ),
     "cleanup_temp": Operation(
         "cleanup_temp", "Limpar arquivos temporários antigos",
