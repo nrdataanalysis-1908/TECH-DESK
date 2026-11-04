@@ -22,17 +22,18 @@ from techdesk.core.operations import (
 CYAN = "\033[96m"
 BLUE = "\033[94m"
 YELLOW = "\033[93m"
+GREEN = "\033[92m"
 RESET = "\033[0m"
 
 MENU_GROUPS = {
-    "DIAGNÓSTICO DO SISTEMA": [
+    "01  |  DIAGNÓSTICO DO SISTEMA": [
         ("1", "Resumo do sistema", "sistema"),
         ("2", "Processador e memória", "sistema"),
         ("3", "Armazenamento", "armazenamento"),
         ("4", "Tempo ligado (uptime)", "uptime"),
         ("5", "Variáveis de ambiente", "environment"),
     ],
-    "REDE E CONECTIVIDADE": [
+    "02  |  REDE E CONECTIVIDADE": [
         ("6", "Configuração IP completa", "ipconfig"),
         ("7", "Servidores DNS", "dns"),
         ("8", "Gateway padrão", "gateway"),
@@ -42,25 +43,18 @@ MENU_GROUPS = {
         ("12", "Tabela ARP", "arp"),
         ("13", "Teste de conectividade", "connectivity"),
     ],
-    "HARDWARE E DISPOSITIVOS": [
+    "03  |  HARDWARE E DISPOSITIVOS": [
         ("14", "Bateria", "battery"),
         ("15", "Dispositivos USB", "usb"),
         ("16", "Impressoras", "printers"),
     ],
-    "PROCESSOS E SERVIÇOS": [
+    "04  |  PROCESSOS E SERVIÇOS": [
         ("17", "Processos em execução", "processes"),
         ("18", "Serviços do Windows", "services"),
         ("19", "Programas na inicialização", "startup"),
         ("20", "Tarefas agendadas", "tasks"),
     ],
-    "EXECUÇÃO E MANUTENÇÃO": [
-        ("27", "Limpar cache DNS", "operation:flush_dns"),
-        ("28", "Limpar arquivos temporários antigos", "operation:cleanup_temp"),
-        ("29", "Reiniciar serviço de impressão", "operation:restart_spooler"),
-        ("30", "Verificar e reparar arquivos do Windows (SFC)", "operation:sfc_scan"),
-        ("31", "Reparar imagem do Windows (DISM)", "operation:dism_restore"),
-    ],
-    "SEGURANÇA E AUDITORIA": [
+    "05  |  SEGURANÇA E AUDITORIA": [
         ("21", "Status do Firewall", "firewall"),
         ("22", "Status do Microsoft Defender", "defender"),
         ("23", "Atualizações instaladas", "updates"),
@@ -68,11 +62,41 @@ MENU_GROUPS = {
         ("25", "Contas locais", "users"),
         ("26", "Softwares instalados", "software"),
     ],
+    "06  |  EXECUÇÃO E MANUTENÇÃO": [
+        ("27", "Limpar cache DNS", "operation:flush_dns"),
+        ("28", "Limpar arquivos temporários antigos", "operation:cleanup_temp"),
+        ("29", "Reiniciar serviço de impressão", "operation:restart_spooler"),
+        ("30", "Verificar e reparar arquivos do Windows (SFC)", "operation:sfc_scan"),
+        ("31", "Reparar imagem do Windows (DISM)", "operation:dism_restore"),
+    ],
 }
 
 
+def _enable_ansi() -> bool:
+    """Habilita sequências ANSI no console Windows moderno; falha de forma segura."""
+    if not sys.stdout.isatty():
+        return False
+    if platform.system() != "Windows":
+        return True
+    try:
+        import ctypes
+        import msvcrt
+
+        handle = msvcrt.get_osfhandle(sys.stdout.fileno())
+        mode = ctypes.c_uint()
+        kernel32 = ctypes.windll.kernel32
+        if not kernel32.GetConsoleMode(handle, ctypes.byref(mode)):
+            return False
+        return bool(kernel32.SetConsoleMode(handle, mode.value | 0x0004))
+    except (AttributeError, OSError, ValueError):
+        return False
+
+
+ANSI_ENABLED = _enable_ansi()
+
+
 def _paint(value: str, color: str) -> str:
-    return f"{color}{value}{RESET}" if sys.stdout.isatty() else value
+    return f"{color}{value}{RESET}" if ANSI_ENABLED else value
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -103,15 +127,24 @@ def _show_diagnostics() -> None:
 
 
 def _show_menu() -> None:
-    print("\n" + _paint("╔══════════════════════════════════════════════════════╗", CYAN))
-    print(_paint("║              TECH DESK  |  NR TECH                   ║", CYAN))
-    print(_paint("║           IT MANAGEMENT & SUPPORT CENTER             ║", BLUE))
-    print(_paint("╚══════════════════════════════════════════════════════╝", CYAN))
+    print("\n" + _paint("╔══════════════════════════════════════════════════════════════╗", CYAN))
+    print(_paint("║                    TECH DESK  |  NR TECH                     ║", CYAN))
+    print(_paint("║             IT MANAGEMENT & SUPPORT CENTER                   ║", BLUE))
+    print(_paint("╚══════════════════════════════════════════════════════════════╝", CYAN))
+    print("  [CONSULTA]  Somente leitura")
+    print("  [EXECUÇÃO]  Altera o sistema após confirmação")
+    print("  [ADMIN]     Exige privilégios elevados")
     for group, entries in MENU_GROUPS.items():
         print("\n" + _paint(group, BLUE))
-        for number, label, _ in entries:
-            print(f"  [{number:>2}] {label}")
-    print("\n  [ 0] Sair")
+        for number, label, topic in entries:
+            if topic.startswith("operation:"):
+                key = topic.split(":", 1)[1]
+                tag = "ADMIN" if OPERATIONS[key].requires_admin else "EXECUÇÃO"
+                color = YELLOW if tag == "ADMIN" else GREEN
+            else:
+                tag, color = "CONSULTA", CYAN
+            print(f"  [{number:>2}] {label:<49} {_paint('[' + tag + ']', color)}")
+    print("\n  [ 0] Encerrar TECH DESK")
 
 
 def _menu(input_fn: Callable[[str], str] = input) -> int:
