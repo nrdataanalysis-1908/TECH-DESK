@@ -1,9 +1,10 @@
-"""Coleta local de informações de endpoint; todas as rotinas são somente leitura."""
+"""Diagnósticos locais somente para leitura e consultas fixas ao Windows."""
 
 import os
 import platform
 import shutil
 import socket
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -100,3 +101,70 @@ def collect_diagnostics() -> dict[str, dict[str, Any]]:
             ),
         },
     }
+
+
+# Scripts constantes: nenhuma entrada do usuário é interpolada ou executada.
+WINDOWS_DIAGNOSTICS: dict[str, str] = {
+    "ipconfig": "ipconfig /all",
+    "dns": "Get-DnsClientServerAddress | Format-Table -AutoSize",
+    "gateway": "Get-NetRoute -DestinationPrefix '0.0.0.0/0' | Format-Table -AutoSize",
+    "adapters": "Get-NetAdapter | Format-Table Name, InterfaceDescription, Status, LinkSpeed -AutoSize",
+    "connections": "Get-NetTCPConnection -State Established -ErrorAction SilentlyContinue | Select-Object -First 40 | Format-Table -AutoSize",
+    "routes": "route.exe print",
+    "arp": "arp.exe -a",
+    "connectivity": "Test-NetConnection -ComputerName 1.1.1.1 -Port 443 -InformationLevel Detailed | Format-List",
+    "processes": "Get-Process | Sort-Object CPU -Descending | Select-Object -First 20 Name, Id, CPU, WorkingSet64 | Format-Table -AutoSize",
+    "services": "Get-Service | Sort-Object Status, DisplayName | Select-Object -First 60 Status, Name, DisplayName | Format-Table -AutoSize",
+    "startup": "Get-CimInstance Win32_StartupCommand | Select-Object Name, Location, User | Format-Table -AutoSize",
+    "software": "Get-ItemProperty 'HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*','HKLM:\\Software\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*' -ErrorAction SilentlyContinue | Where-Object DisplayName | Select-Object -First 80 DisplayName, DisplayVersion, Publisher | Sort-Object DisplayName | Format-Table -AutoSize",
+    "tasks": "Get-ScheduledTask | Select-Object -First 60 TaskName, TaskPath, State | Format-Table -AutoSize",
+    "firewall": "Get-NetFirewallProfile | Format-Table Name, Enabled, DefaultInboundAction, DefaultOutboundAction -AutoSize",
+    "defender": "Get-MpComputerStatus | Select-Object AntivirusEnabled, RealTimeProtectionEnabled, AntivirusSignatureLastUpdated, AMServiceEnabled | Format-List",
+    "updates": "Get-HotFix | Sort-Object InstalledOn -Descending | Select-Object -First 25 HotFixID, Description, InstalledOn | Format-Table -AutoSize",
+    "events": "Get-WinEvent -FilterHashtable @{LogName='System'; Level=2} -MaxEvents 20 -ErrorAction SilentlyContinue | Select-Object TimeCreated, Id, ProviderName, Message | Format-List",
+    "battery": "Get-CimInstance Win32_Battery -ErrorAction SilentlyContinue | Format-List Name, Status, EstimatedChargeRemaining, BatteryStatus",
+    "usb": "Get-PnpDevice -PresentOnly -ErrorAction SilentlyContinue | Where-Object InstanceId -Like 'USB*' | Select-Object -First 40 Status, Class, FriendlyName | Format-Table -AutoSize",
+    "printers": "Get-Printer -ErrorAction SilentlyContinue | Format-Table Name, DriverName, PrinterStatus, Shared -AutoSize",
+    "environment": "Get-ChildItem Env: | Sort-Object Name | Format-Table -AutoSize",
+    "uptime": "Get-CimInstance Win32_OperatingSystem | Select-Object CSName, LastBootUpTime, LocalDateTime | Format-List",
+    "users": "Get-LocalUser | Select-Object Name, Enabled, LastLogon, PasswordRequired | Format-Table -AutoSize",
+}
+
+
+def run_windows_diagnostic(topic: str) -> str:
+    """Executa uma consulta PowerShell predefinida, somente leitura e com timeout."""
+    if topic not in WINDOWS_DIAGNOSTICS:
+        raise ValueError(f"Diagnóstico desconhecido: {topic}")
+    if platform.system() != "Windows":
+        return "Este diagnóstico está disponível somente no Windows."
+
+    command = [
+        "powershell.exe",
+        "-NoLogo",
+        "-NoProfile",
+        "-NonInteractive",
+        "-Command",
+        "$ErrorActionPreference = 'Continue'; " + WINDOWS_DIAGNOSTICS[topic],
+    ]
+    try:
+        result = subprocess.run(
+            command,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=25,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return f"Falha ao executar diagnóstico: {exc}"
+
+    output = (result.stdout or "").strip()
+    errors = (result.stderr or "").strip()
+    if output and errors:
+        output += f"\n\nAvisos: {errors}"
+    elif errors and not output:
+        output = errors
+    if not output:
+        output = "Nenhum dado retornado."
+    return output[:16000]
