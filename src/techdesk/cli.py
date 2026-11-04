@@ -12,6 +12,11 @@ from techdesk.core.diagnostics import (
     run_windows_diagnostic,
 )
 from techdesk.core.logging_config import configure_logging
+from techdesk.core.operations import (
+    OPERATIONS,
+    execute_operation,
+    preview_temp_cleanup,
+)
 
 
 CYAN = "\033[96m"
@@ -47,6 +52,13 @@ MENU_GROUPS = {
         ("18", "Serviços do Windows", "services"),
         ("19", "Programas na inicialização", "startup"),
         ("20", "Tarefas agendadas", "tasks"),
+    ],
+    "EXECUÇÃO E MANUTENÇÃO": [
+        ("27", "Limpar cache DNS", "operation:flush_dns"),
+        ("28", "Limpar arquivos temporários antigos", "operation:cleanup_temp"),
+        ("29", "Reiniciar serviço de impressão", "operation:restart_spooler"),
+        ("30", "Verificar e reparar arquivos do Windows (SFC)", "operation:sfc_scan"),
+        ("31", "Reparar imagem do Windows (DISM)", "operation:dism_restore"),
     ],
     "SEGURANÇA E AUDITORIA": [
         ("21", "Status do Firewall", "firewall"),
