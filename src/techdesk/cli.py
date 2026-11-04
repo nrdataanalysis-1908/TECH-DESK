@@ -12,6 +12,12 @@ from techdesk.core.diagnostics import (
     run_windows_diagnostic,
 )
 from techdesk.core.logging_config import configure_logging
+from techdesk.core.support_tools import (
+    close_process_gracefully,
+    download_https_file,
+    open_windows_tool,
+    top_memory_processes,
+)
 from techdesk.core.operations import (
     OPERATIONS,
     execute_operation,
@@ -20,8 +26,8 @@ from techdesk.core.operations import (
 
 CYAN = "\033[96m"
 BLUE = "\033[94m"
-YELLOW = "\033[93m"
-GREEN = "\033[92m"
+YELLOW = BLUE
+GREEN = CYAN
 RESET = "\033[0m"
 
 MENU_GROUPS = {
@@ -62,6 +68,26 @@ MENU_GROUPS = {
     "04  |  SEGURANÇA": [
         ("29", "Status do Firewall", "firewall"),
         ("30", "Status do Microsoft Defender", "defender"),
+    ],
+    "05  |  FERRAMENTAS E MANUTENÇÃO AVANÇADA": [
+        ("31", "Atualizar políticas de grupo (GPO)", "operation:update_group_policy"),
+        ("32", "Exportar logs de eventos (EVTX)", "operation:backup_event_logs"),
+        ("33", "Limpar logs Application/Setup com backup", "operation:clear_event_logs"),
+        ("34", "Atualizar aplicativos via Winget", "operation:winget_upgrade_all"),
+        ("35", "Abrir Limpeza de Disco", "tool:disk_cleanup"),
+        ("36", "Informações avançadas do sistema", "tool:system_info"),
+        ("37", "Gerenciador de Dispositivos", "tool:device_manager"),
+        ("38", "Abrir PowerShell", "tool:powershell"),
+        ("39", "Teste de velocidade da internet", "tool:speedtest"),
+        ("40", "Baixar arquivo por HTTPS (sem executar)", "download_https"),
+        ("41", "Inventário de dispositivos USB", "usb"),
+        ("42", "Inventário de softwares instalados", "software"),
+        ("43", "Eventos críticos e erros do Windows", "events"),
+        ("44", "Relatório de políticas de grupo (gpresult)", "gpresult"),
+        ("45", "Processos com maior consumo de memória", "memory_processes"),
+        ("46", "Solicitar fechamento gracioso de processo", "close_process"),
+        ("47", "Verificar atualizações disponíveis (Winget)", "winget"),
+        ("48", "Uso de CPU e memória em tempo real", "performance"),
     ],
 }
 
@@ -139,10 +165,9 @@ def _show_menu() -> None:
             if topic.startswith("operation:"):
                 key = topic.split(":", 1)[1]
                 tag = "ADMIN" if OPERATIONS[key].requires_admin else "EXECUÇÃO"
-                color = YELLOW if tag == "ADMIN" else GREEN
             else:
-                tag, color = "CONSULTA", CYAN
-            print(f"  [{number:>2}] {label:<49} {_paint('[' + tag + ']', color)}")
+                tag = "CONSULTA"
+            print(_paint(f"  [{number:>2}] {label:<49} [{tag}]", CYAN))
     print("\n  [ 0] Encerrar TECH DESK")
 
 
@@ -172,7 +197,7 @@ def _menu(input_fn: collections.abc.Callable[[str], str] = input) -> int:
             report = collect_diagnostics()
             if topic == "armazenamento":
                 _show_section(label.upper(), report["armazenamento"])
-            elif choice == "2":
+            elif choice == "20":
                 _show_section(label.upper(), {
                     key: report["sistema"][key]
                     for key in ("processador", "nucleos_logicos", "memoria_total", "memoria_disponivel")
@@ -238,6 +263,56 @@ def _menu(input_fn: collections.abc.Callable[[str], str] = input) -> int:
             else:
                 print(" SAÍDA DO COMANDO: o Windows não retornou texto.")
             print("=" * 68, flush=True)
+            try:
+                input_fn("\nPressione ENTER para retornar ao menu...")
+            except (EOFError, KeyboardInterrupt):
+                pass
+        elif topic.startswith("tool:"):
+            result = open_windows_tool(topic.split(":", 1)[1])
+            print(f"\n{label}: {result.message}")
+            if result.output:
+                print(result.output)
+            try:
+                input_fn("\nPressione ENTER para retornar ao menu...")
+            except (EOFError, KeyboardInterrupt):
+                pass
+        elif topic == "download_https":
+            url = input_fn("\nInforme a URL HTTPS do arquivo: ").strip()
+            if not url:
+                print(_paint("Download cancelado: URL vazia.", YELLOW))
+                continue
+            answer = input_fn("Confirma baixar (limite 100 MiB, sem executar)? Digite BAIXAR: ").strip().upper()
+            if answer != "BAIXAR":
+                print("Download cancelado.")
+                continue
+            result = download_https_file(url)
+            logging.getLogger("techdesk").info("Download HTTPS: %s", "success" if result.success else "failure")
+            print(f"\n{label}: {result.message}")
+            if result.output:
+                print(result.output)
+            try:
+                input_fn("\nPressione ENTER para retornar ao menu...")
+            except (EOFError, KeyboardInterrupt):
+                pass
+        elif topic == "memory_processes":
+            result = top_memory_processes()
+            print(f"\n{label}\n{result.message}\n{result.output}")
+            try:
+                input_fn("\nPressione ENTER para retornar ao menu...")
+            except (EOFError, KeyboardInterrupt):
+                pass
+        elif topic == "close_process":
+            raw_pid = input_fn("\nInforme o PID exibido no inventário: ").strip()
+            if not raw_pid.isdecimal() or int(raw_pid) <= 0:
+                print(_paint("PID inválido.", YELLOW))
+                continue
+            pid = int(raw_pid)
+            answer = input_fn(f"Solicitar fechamento normal do PID {pid}? Digite FECHAR: ").strip().upper()
+            if answer != "FECHAR":
+                print("Ação cancelada.")
+                continue
+            result = close_process_gracefully(pid)
+            print(f"\n{result.message}\n{result.output}")
             try:
                 input_fn("\nPressione ENTER para retornar ao menu...")
             except (EOFError, KeyboardInterrupt):

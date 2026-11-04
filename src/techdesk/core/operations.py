@@ -7,6 +7,10 @@ import logging
 import platform
 import subprocess
 import tempfile
+
+from techdesk.core.support_tools import (
+    backup_event_logs, clear_event_logs_after_backup,
+)
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -119,8 +123,28 @@ OPERATIONS = {
         "Fecha temporariamente o Explorer, remove caches de miniaturas do usuário e reinicia o shell.",
         "L2 — reinício do shell", False, 90,
     ),
-}
+    "update_group_policy": Operation(
+        "update_group_policy", "Atualizar políticas de grupo (GPO)",
+        "Executa gpupdate /force para atualizar políticas de usuário e computador.",
+        "L2 — alteração de políticas", True, 240,
+    ),
+    "backup_event_logs": Operation(
+        "backup_event_logs", "Exportar logs de eventos",
+        "Exporta Application, System, Setup e Security para arquivos EVTX em pasta datada.",
+        "L1 — backup de diagnóstico", True, 300,
+    ),
+    "clear_event_logs": Operation(
+        "clear_event_logs", "Limpar logs Application e Setup (com backup)",
+        "Exporta Application e Setup antes da limpeza. O log Security nunca é apagado.",
+        "L3 — alteração de auditoria", True, 300,
+    ),
+    "winget_upgrade_all": Operation(
+        "winget_upgrade_all", "Atualizar aplicativos via Winget",
+        "Executa winget upgrade --all. Atualizações podem alterar versões e fechar aplicativos.",
+        "L2 — alteração de software", False, 3600,
+    ),
 
+}
 
 @dataclass
 class OperationResult:
@@ -357,6 +381,21 @@ def execute_operation(
              "Restart-Service -Name wuauserv -Force -ErrorAction Stop"],
             operation.timeout_seconds,
         )
+    elif key == "update_group_policy":
+        result = _run(["gpupdate.exe", "/force"], operation.timeout_seconds)
+    elif key == "backup_event_logs":
+        backup = backup_event_logs()
+        result = OperationResult(backup.success, backup.message, backup.output)
+    elif key == "clear_event_logs":
+        backup = clear_event_logs_after_backup()
+        result = OperationResult(backup.success, backup.message, backup.output)
+    elif key == "winget_upgrade_all":
+        result = _run(
+            ["winget.exe", "upgrade", "--all", "--accept-source-agreements",
+             "--accept-package-agreements"],
+            operation.timeout_seconds,
+        )
+
     elif key == "clear_thumbnail_cache":
         script = (
             "$ErrorActionPreference='Stop'; "

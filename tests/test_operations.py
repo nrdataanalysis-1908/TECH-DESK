@@ -14,7 +14,8 @@ def test_operations_are_allowlisted():
         "restart_explorer", "clear_print_queue", "create_restore_point", "check_disk",
         "renew_ip", "reset_winsock", "empty_recycle_bin", "restart_audio", "flush_arp",
         "quick_defender_scan", "update_defender_signatures", "restart_windows_update",
-        "clear_thumbnail_cache",
+        "clear_thumbnail_cache", "update_group_policy", "backup_event_logs", "clear_event_logs",
+        "winget_upgrade_all", "open_disk_cleanup",
     }
 
 
@@ -57,6 +58,9 @@ def test_all_operations_have_a_dispatcher():
         patch("techdesk.core.operations.is_admin", return_value=True),
         patch("techdesk.core.operations._run", return_value=OperationResult(True, "ok")),
         patch("techdesk.core.operations._cleanup_temp", return_value=OperationResult(True, "ok")),
+        patch("techdesk.core.operations.backup_event_logs", return_value=type("R", (), {"success": True, "message": "ok", "output": ""})()),
+        patch("techdesk.core.operations.clear_event_logs_after_backup", return_value=type("R", (), {"success": True, "message": "ok", "output": ""})()),
+        patch("techdesk.core.operations.open_windows_tool", return_value=type("R", (), {"success": True, "message": "ok", "output": ""})()),
     ):
         for key in OPERATIONS:
             result = execute_operation(key, lambda _: True)
