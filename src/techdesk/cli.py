@@ -191,17 +191,37 @@ def _menu(input_fn: Callable[[str], str] = input) -> int:
                 count, size = preview_temp_cleanup()
                 print(f"  Prévia: {count} arquivo(s), {size / (1024**2):.2f} MiB elegíveis.")
             try:
-                answer = input_fn("Digite SIM para executar: ").strip()
+                answer = input_fn("Digite SIM para executar: ").strip().upper()
             except (EOFError, KeyboardInterrupt):
-                print("\nOperação cancelada.")
+                print("\nOperação cancelada.", flush=True)
                 continue
-            result = execute_operation(
-                operation_key,
-                confirm=lambda _: answer == "SIM",
-            )
-            print(_paint(result.message, CYAN if result.success else YELLOW))
+            if answer != "SIM":
+                result = execute_operation(
+                    operation_key,
+                    confirm=lambda _: False,
+                )
+                print(_paint(result.message, YELLOW), flush=True)
+                continue
+
+            print(_paint("\\nExecutando operação... aguarde.", YELLOW), flush=True)
+            try:
+                result = execute_operation(
+                    operation_key,
+                    confirm=lambda _: True,
+                )
+            except Exception:
+                logging.getLogger("techdesk").exception(
+                    "Falha inesperada ao executar a operação %s", operation_key
+                )
+                print(_paint(
+                    "Falha inesperada. Consulte o log do TECH DESK.",
+                    YELLOW,
+                ), flush=True)
+                continue
+
+            print(_paint(result.message, CYAN if result.success else YELLOW), flush=True)
             if result.output:
-                print(result.output)
+                print(result.output, flush=True)
         elif topic in WINDOWS_DIAGNOSTICS:
             print("\n" + _paint(label.upper(), BLUE))
             print("-" * 60)
