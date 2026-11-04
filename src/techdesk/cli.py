@@ -12,16 +12,16 @@ from techdesk.core.diagnostics import (
     run_windows_diagnostic,
 )
 from techdesk.core.logging_config import configure_logging
+from techdesk.core.operations import (
+    OPERATIONS,
+    execute_operation,
+    preview_temp_cleanup,
+)
 from techdesk.core.support_tools import (
     close_process_gracefully,
     download_https_file,
     open_windows_tool,
     top_memory_processes,
-)
-from techdesk.core.operations import (
-    OPERATIONS,
-    execute_operation,
-    preview_temp_cleanup,
 )
 
 CYAN = "\033[96m"

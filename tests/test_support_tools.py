@@ -1,10 +1,17 @@
-from unittest.mock import patch
 import urllib.error
+from unittest.mock import patch
+
 import pytest
+
 from techdesk.core.support_tools import (
-    SupportToolResult, _HTTPSOnlyRedirect, close_process_gracefully,
-    clear_event_logs_after_backup, download_https_file, open_windows_tool,
+    SupportToolResult,
+    _HTTPSOnlyRedirect,
+    clear_event_logs_after_backup,
+    close_process_gracefully,
+    download_https_file,
+    open_windows_tool,
 )
+
 
 def test_download_rejects_non_https_without_network():
     result = download_https_file("http://example.com/file.zip")

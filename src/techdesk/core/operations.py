@@ -8,12 +8,14 @@ import platform
 import subprocess
 import tempfile
 
-from techdesk.core.support_tools import (
-    backup_event_logs, clear_event_logs_after_backup,
-)
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+
+from techdesk.core.support_tools import (
+    backup_event_logs,
+    clear_event_logs_after_backup,
+)
 
 LOGGER = logging.getLogger("techdesk.operations")
 
