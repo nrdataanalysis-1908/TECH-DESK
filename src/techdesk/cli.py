@@ -126,13 +126,15 @@ def _menu(input_fn: Callable[[str], str] = input) -> int:
         label, topic = actions[choice]
         if topic in {"sistema", "armazenamento"}:
             report = collect_diagnostics()
-            section = "sistema" if topic == "sistema" else "armazenamento"
-            _show_section(label.upper(), report[section])
-            if topic == "sistema" and choice == "2":
-                _show_section("PROCESSADOR E MEMÓRIA", {
+            if topic == "armazenamento":
+                _show_section(label.upper(), report["armazenamento"])
+            elif choice == "2":
+                _show_section(label.upper(), {
                     key: report["sistema"][key]
                     for key in ("processador", "nucleos_logicos", "memoria_total", "memoria_disponivel")
                 })
+            else:
+                _show_section(label.upper(), report["sistema"])
         elif topic in WINDOWS_DIAGNOSTICS:
             print("\n" + _paint(label.upper(), BLUE))
             print("-" * 60)
