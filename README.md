@@ -25,14 +25,16 @@ O objetivo é transformar rotinas dispersas de suporte em operações padronizad
 - Catálogo com 26 opções de diagnóstico no Windows: rede, adaptadores, DNS, rotas, conexões, processos, serviços, inicialização, tarefas, firewall, Defender, atualizações, eventos, USB, bateria, impressoras, softwares e contas locais.
 - Consultas PowerShell predefinidas, somente leitura, com timeout e sem aceitar comandos arbitrários.
 - Opção `techdesk --diagnostics` para execução direta do relatório.
-- Testes automatizados para o módulo de diagnóstico e validação do catálogo seguro.
+- Operações administrativas locais: limpeza do cache DNS, limpeza seletiva de arquivos temporários antigos, reinício do Spooler, SFC e DISM.
+- Confirmação explícita, allowlist, verificação de elevação para tarefas administrativas, timeout e auditoria JSONL local.
+- Testes automatizados para diagnósticos e guardrails de execução.
 
 ## Capacidades planejadas
 
 | Domínio | Recursos |
 |---|---|
 | Diagnóstico | Resumo do endpoint, hardware básico, processos, serviços e eventos |
-| Manutenção | Temporários, integridade do Windows, disco e Windows Update |
+| Manutenção | Limpeza seletiva de temporários, SFC e DISM (primeiras operações implementadas) |
 | Rede | Interfaces, IP, DNS, rotas, conexões e conectividade |
 | Segurança | Firewall, Microsoft Defender, políticas e auditoria |
 | Gestão | Inventário, histórico de operações e relatórios |
@@ -96,11 +98,11 @@ Leia [docs/SECURITY.md](docs/SECURITY.md) antes de implementar novos módulos.
 - [x] Configuração e logging do núcleo
 - [x] CLI interativa
 - [x] Diagnóstico básico do endpoint
-- [ ] Catálogo seguro de operações administrativas
+- [x] Catálogo inicial de operações administrativas com confirmação e auditoria
 - [ ] Inventário avançado de hardware e software
 - [x] Catálogo inicial com 26 diagnósticos somente para leitura
 - [ ] Diagnóstico aprofundado de rede e sistema
-- [ ] Rotinas de manutenção Windows
+- [ ] Ampliar rotinas de manutenção Windows
 - [ ] Auditoria persistente e histórico
 - [ ] Desktop Tauri
 - [ ] API e agente local autenticado
