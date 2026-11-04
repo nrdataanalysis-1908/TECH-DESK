@@ -222,6 +222,10 @@ def _menu(input_fn: Callable[[str], str] = input) -> int:
             print(_paint(result.message, CYAN if result.success else YELLOW), flush=True)
             if result.output:
                 print(result.output, flush=True)
+            try:
+                input_fn("\\nPressione ENTER para voltar ao menu...")
+            except (EOFError, KeyboardInterrupt):
+                pass
         elif topic in WINDOWS_DIAGNOSTICS:
             print("\n" + _paint(label.upper(), BLUE))
             print("-" * 60)
