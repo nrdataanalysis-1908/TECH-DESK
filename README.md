@@ -22,17 +22,19 @@ O objetivo é transformar rotinas dispersas de suporte em operações padronizad
 - Coleta de memória em Windows e Linux quando suportada pelo sistema.
 - Inventário de armazenamento da unidade do diretório do usuário.
 - Identificação de endereços IP associados ao hostname local.
+- Catálogo com 26 opções de diagnóstico no Windows: rede, adaptadores, DNS, rotas, conexões, processos, serviços, inicialização, tarefas, firewall, Defender, atualizações, eventos, USB, bateria, impressoras, softwares e contas locais.
+- Consultas PowerShell predefinidas, somente leitura, com timeout e sem aceitar comandos arbitrários.
 - Opção `techdesk --diagnostics` para execução direta do relatório.
-- Testes automatizados para o módulo de diagnóstico.
+- Testes automatizados para o módulo de diagnóstico e validação do catálogo seguro.
 
 ## Capacidades planejadas
 
 | Domínio | Recursos |
 |---|---|
-| Diagnóstico | Hardware, processos, serviços e eventos |
+| Diagnóstico | Resumo do endpoint, hardware básico, processos, serviços e eventos |
 | Manutenção | Temporários, integridade do Windows, disco e Windows Update |
-| Rede | Interfaces, IP, DNS e conectividade |
-| Segurança | Proteção, políticas, auditoria e verificações |
+| Rede | Interfaces, IP, DNS, rotas, conexões e conectividade |
+| Segurança | Firewall, Microsoft Defender, políticas e auditoria |
 | Gestão | Inventário, histórico de operações e relatórios |
 | Automação | Catálogo de tarefas administrativas com validações |
 | Inteligência | Assistência contextual para análise e recomendação |
@@ -96,6 +98,7 @@ Leia [docs/SECURITY.md](docs/SECURITY.md) antes de implementar novos módulos.
 - [x] Diagnóstico básico do endpoint
 - [ ] Catálogo seguro de operações administrativas
 - [ ] Inventário avançado de hardware e software
+- [x] Catálogo inicial com 26 diagnósticos somente para leitura
 - [ ] Diagnóstico aprofundado de rede e sistema
 - [ ] Rotinas de manutenção Windows
 - [ ] Auditoria persistente e histórico
