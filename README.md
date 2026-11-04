@@ -2,116 +2,95 @@
 
 **NR TECH | IT MANAGEMENT & SUPPORT CENTER**
 
-Plataforma modular de suporte e gestão de TI para diagnóstico, manutenção, monitoramento, automação e segurança de endpoints Windows.
+Central de execução e manutenção de endpoints Windows, com operações locais controladas, confirmação explícita, verificação de privilégios, timeout e trilha de auditoria.
 
-## Visão do produto
+## Foco operacional
 
-O TECH DESK reúne três interfaces sobre um núcleo compartilhado:
+O menu principal prioriza execução: são 18 operações administrativas e de manutenção contra 12 consultas rápidas. O catálogo de diagnósticos adicionais permanece acessível pela linha de comando.
 
-- Terminal: operações administrativas por CLI.
-- Desktop: aplicação local para técnicos e administradores.
-- Web: painel central de monitoramento e gestão, integrado a agentes locais autenticados.
+### Operações implementadas
 
-O objetivo é transformar rotinas dispersas de suporte em operações padronizadas, rastreáveis, seguras e extensíveis.
-
-## Implementado
-
-- CLI interativa com menu de navegação.
-- Menu organizado por domínio, com classificação visual de consultas, execuções e ações administrativas.
-- Cores ANSI habilitadas no console Windows quando suportadas, com fallback sem códigos de controle no PowerShell 5.1.
-- Diagnóstico local somente para leitura.
-- Identificação do sistema operacional, arquitetura, processador, núcleos lógicos e hostname.
-- Coleta de memória em Windows e Linux quando suportada pelo sistema.
-- Inventário de armazenamento da unidade do diretório do usuário.
-- Identificação de endereços IP associados ao hostname local.
-- Catálogo com 26 opções de diagnóstico no Windows: rede, adaptadores, DNS, rotas, conexões, processos, serviços, inicialização, tarefas, firewall, Defender, atualizações, eventos, USB, bateria, impressoras, softwares e contas locais.
-- Consultas PowerShell predefinidas, somente leitura, com timeout e sem aceitar comandos arbitrários.
-- Opção `techdesk --diagnostics` para execução direta do relatório.
-- Operações administrativas locais: limpeza do cache DNS, limpeza seletiva de arquivos temporários antigos, reinício do Spooler, SFC e DISM.
-- Confirmação explícita, allowlist, verificação de elevação para tarefas administrativas, timeout e auditoria JSONL local.
-- Testes automatizados para diagnósticos e guardrails de execução.
-
-## Capacidades planejadas
-
-| Domínio | Recursos |
+| Área | Operações |
 |---|---|
-| Diagnóstico | Resumo do endpoint, hardware básico, processos, serviços e eventos |
-| Manutenção | Limpeza seletiva de temporários, SFC e DISM (primeiras operações implementadas) |
-| Rede | Interfaces, IP, DNS, rotas, conexões e conectividade |
-| Segurança | Firewall, Microsoft Defender, políticas e auditoria |
-| Gestão | Inventário, histórico de operações e relatórios |
-| Automação | Catálogo de tarefas administrativas com validações |
-| Inteligência | Assistência contextual para análise e recomendação |
+| Manutenção | Limpeza de DNS, temporários antigos e cache de miniaturas; esvaziamento da Lixeira |
+| Shell e dispositivos | Reinício do Explorer, Spooler e serviço de áudio; limpeza da fila de impressão |
+| Rede | Renovação DHCP, limpeza de cache ARP e redefinição Winsock |
+| Segurança | Atualização das assinaturas e verificação rápida do Microsoft Defender |
+| Integridade | Criação de ponto de restauração, CHKDSK online, SFC e DISM |
+| Atualizações | Reinício controlado do serviço Windows Update |
 
-> Os recursos planejados só serão considerados disponíveis após implementação e testes.
+Ações com potencial de perda ou interrupção são identificadas por nível de risco e descrição antes da confirmação. Esvaziar a Lixeira e a fila de impressão são ações irreversíveis para os respectivos itens removidos. A redefinição Winsock pode exigir reinicialização do Windows.
 
-## Arquitetura
+### Consultas do menu
 
-- Core: Python — configuração, contratos, validação, políticas e logging.
-- Windows adapters: PowerShell — integração com recursos nativos do sistema.
-- Desktop: Tauri — interface local.
-- Web: Next.js — painel de gestão.
-- Agent/API: comunicação autenticada entre painel e endpoints.
-- Storage: SQLite local e PostgreSQL para cenários centralizados.
+Resumo do sistema, CPU/memória, armazenamento, uptime, processos, serviços, configuração IP, DNS, adaptadores, conectividade, Firewall e Microsoft Defender.
 
-Consulte [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) e [docs/SECURITY.md](docs/SECURITY.md).
+O catálogo estendido de consultas Windows continua disponível com `--diagnostic`, por exemplo:
+
+```powershell
+python -m techdesk.cli --diagnostic usb
+python -m techdesk.cli --diagnostic events
+python -m techdesk.cli --diagnostic software
+```
+
+## Segurança e execução
+
+- Catálogo fechado de operações: não há execução de comandos arbitrários fornecidos pelo usuário.
+- Confirmação textual explícita antes de qualquer alteração.
+- Verificação de elevação para operações administrativas.
+- Execução sem shell intermediário (`shell=False`), com timeout e captura do código de saída.
+- Prévia não destrutiva para a limpeza seletiva de temporários.
+- Auditoria JSONL local com operação, horário, host e resultado, sem registrar a saída dos comandos.
+- Saídas de utilitários nativos do Windows decodificadas pela página OEM do sistema.
+- Testes automatizados para catálogo, dispatch, cancelamento e bloqueio por privilégio.
 
 ## Instalação — desenvolvimento
 
-No PowerShell:
+PowerShell:
 
-`git clone https://github.com/nrdataanalysis-1908/TECH-DESK.git`
-
-`cd TECH-DESK`
-
-`py -3.11 -m venv .venv`
-
-`.\.venv\Scripts\Activate.ps1`
-
-`python -m pip install --upgrade pip`
-
-`pip install -e ".[dev]"`
+```powershell
+git clone https://github.com/nrdataanalysis-1908/TECH-DESK.git
+cd TECH-DESK
+py -3.11 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+pip install -e ".[dev]"
+```
 
 ## Execução
 
-- Menu interativo: `techdesk`
-- Relatório direto: `techdesk --diagnostics`
+```powershell
+python -m techdesk.cli
+python -m techdesk.cli --diagnostics
+python -m techdesk.cli --diagnostic dns
+```
 
-## Testes e qualidade
+Abra o terminal como Administrador somente quando for executar operações que exigem elevação. O TECH DESK não tenta elevar privilégios silenciosamente.
 
-- `pytest`
-- `ruff check .`
+## Qualidade
 
-## Segurança por concepção
+```powershell
+pytest
+ruff check .
+```
 
-1. Allowlist de operações: nada de execução arbitrária de comandos recebidos do painel.
-2. Privilégio mínimo: elevação somente quando indispensável.
-3. Confirmação explícita para ações destrutivas ou disruptivas.
-4. Validação de pré-condições, timeout e tratamento de falhas.
-5. Logs estruturados sem credenciais, tokens ou segredos.
-6. Auditoria de ator, operação, horário e resultado.
-7. Separação entre interface, regras de negócio e adaptadores do sistema.
+O GitHub Actions executa os testes e o lint em Linux e Windows. A aprovação da CI não substitui a validação funcional das operações em uma máquina Windows real.
 
-Leia [docs/SECURITY.md](docs/SECURITY.md) antes de implementar novos módulos.
+## Arquitetura
 
-## Roadmap
+- Core: Python — catálogo, políticas, validações, execução e auditoria.
+- Adaptadores Windows: utilitários nativos e PowerShell com comandos fixos.
+- CLI: interface operacional atual.
+- Desktop: Tauri — planejado.
+- Web/API e agente local autenticado: planejados.
+- Persistência centralizada: PostgreSQL — planejada; auditoria atual é local.
 
-- [x] Repositório e fundação inicial
-- [x] Configuração e logging do núcleo
-- [x] CLI interativa
-- [x] Diagnóstico básico do endpoint
-- [x] Catálogo inicial de operações administrativas com confirmação e auditoria
-- [ ] Inventário avançado de hardware e software
-- [x] Catálogo inicial com 26 diagnósticos somente para leitura
-- [ ] Diagnóstico aprofundado de rede e sistema
-- [ ] Ampliar rotinas de manutenção Windows
-- [ ] Auditoria persistente e histórico
-- [ ] Desktop Tauri
-- [ ] API e agente local autenticado
-- [ ] Painel Web Next.js
-- [ ] Assistente inteligente
-- [ ] CI, empacotamento e releases
+## Situação do produto
+
+A CLI e o primeiro conjunto de operações locais estão implementados. Desktop, painel web, agente remoto, gestão centralizada, empacotamento e releases ainda não fazem parte da versão funcional atual.
+
+O projeto só deve ser apresentado como validado em produção após CI verde e testes funcionais documentados em Windows 11, incluindo cenários de sucesso, cancelamento, falta de privilégio, timeout e falha do comando.
 
 ## Licença
 
-Distribuído sob a licença MIT. Consulte [LICENSE](LICENSE).
+MIT. Consulte [LICENSE](LICENSE).
