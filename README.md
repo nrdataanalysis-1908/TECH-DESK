@@ -9,7 +9,7 @@ Central inteligente de suporte, diagnóstico e manutenção de endpoints Windows
 ![Python](https://img.shields.io/badge/Python-3.11+-2563EB?style=for-the-badge&logo=python&logoColor=white)
 ![Windows](https://img.shields.io/badge/Platform-Windows-2563EB?style=for-the-badge&logo=windows&logoColor=white)
 [![PyPI version](https://img.shields.io/badge/PyPI-v0.1.0-2563EB?style=for-the-badge&logo=pypi&logoColor=white)](https://pypi.org/project/tech-desk/)
-[![PyPI downloads](https://img.shields.io/pypi/dm/tech-desk?label=downloads%2Fmonth&style=for-the-badge&logo=pypi&logoColor=white)](https://pypi.org/project/tech-desk/)
+[![PyPI downloads](https://img.shields.io/badge/downloads%2Fmonth-view%20on%20PyPI-2563EB?style=for-the-badge&logo=pypi&logoColor=white)](https://pypi.org/project/tech-desk/)
 ![CI](https://img.shields.io/badge/CI-Windows%20%7C%20Linux-0EA5E9?style=for-the-badge&logo=githubactions&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-2563EB?style=for-the-badge)
 
