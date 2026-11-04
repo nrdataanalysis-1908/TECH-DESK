@@ -147,6 +147,28 @@ def _menu(input_fn: Callable[[str], str] = input) -> int:
                 })
             else:
                 _show_section(label.upper(), report["sistema"])
+        elif topic.startswith("operation:"):
+            operation_key = topic.split(":", 1)[1]
+            operation = OPERATIONS[operation_key]
+            print("\n" + _paint("CONFIRMAÇÃO DE OPERAÇÃO", YELLOW))
+            print(f"  Ação: {operation.title}")
+            print(f"  Risco: {operation.risk}")
+            print(f"  Detalhes: {operation.description}")
+            if operation_key == "cleanup_temp":
+                count, size = preview_temp_cleanup()
+                print(f"  Prévia: {count} arquivo(s), {size / (1024**2):.2f} MiB elegíveis.")
+            try:
+                answer = input_fn("Digite SIM para executar: ").strip()
+            except (EOFError, KeyboardInterrupt):
+                print("\nOperação cancelada.")
+                continue
+            result = execute_operation(
+                operation_key,
+                confirm=lambda _: answer == "SIM",
+            )
+            print(_paint(result.message, CYAN if result.success else YELLOW))
+            if result.output:
+                print(result.output)
         elif topic in WINDOWS_DIAGNOSTICS:
             print("\n" + _paint(label.upper(), BLUE))
             print("-" * 60)
