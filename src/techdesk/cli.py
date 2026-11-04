@@ -1,8 +1,8 @@
+from collections.abc import Callable
 import argparse
 import logging
 import platform
 import sys
-from collections.abc import Callable
 
 from techdesk import __version__
 from techdesk.core.config import load_settings
