@@ -134,6 +134,14 @@ def _show_diagnostics() -> None:
         _show_section(section.upper(), values)
 
 
+def _pause_before_menu(input_fn: collections.abc.Callable[[str], str]) -> None:
+    """Mantém o resultado visível até o usuário decidir retornar ao menu."""
+    try:
+        input_fn("\nPressione ENTER para retornar ao menu...")
+    except (EOFError, KeyboardInterrupt):
+        print("\nRetornando ao menu.")
+
+
 def _show_menu() -> None:
     print("\n" + _paint("╔══════════════════════════════════════════════════════════════╗", CYAN))
     print(_paint("║                    TECH DESK  |  NR TECH                     ║", CYAN))
@@ -267,6 +275,7 @@ def _menu(input_fn: collections.abc.Callable[[str], str] = input) -> int:
                 })
             else:
                 _show_section(label.upper(), report["sistema"])
+            _pause_before_menu(input_fn)
         elif topic.startswith("operation:"):
             operation_key = topic.split(":", 1)[1]
             operation = OPERATIONS[operation_key]
@@ -386,8 +395,10 @@ def _menu(input_fn: collections.abc.Callable[[str], str] = input) -> int:
             print("\n" + _paint(label.upper(), BLUE))
             print("-" * 60)
             print(run_windows_diagnostic(topic))
+            _pause_before_menu(input_fn)
         else:
             print(_paint("Diagnóstico não configurado.", YELLOW))
+            _pause_before_menu(input_fn)
 
 
 def main() -> int:
