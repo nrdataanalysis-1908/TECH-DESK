@@ -17,6 +17,8 @@ O objetivo é transformar rotinas dispersas de suporte em operações padronizad
 ## Implementado
 
 - CLI interativa com menu de navegação.
+- Menu organizado por domínio, com classificação visual de consultas, execuções e ações administrativas.
+- Cores ANSI habilitadas no console Windows quando suportadas, com fallback sem códigos de controle no PowerShell 5.1.
 - Diagnóstico local somente para leitura.
 - Identificação do sistema operacional, arquitetura, processador, núcleos lógicos e hostname.
 - Coleta de memória em Windows e Linux quando suportada pelo sistema.
