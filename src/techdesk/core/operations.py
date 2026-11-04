@@ -160,13 +160,24 @@ def _audit(operation: str, result: str) -> None:
         LOGGER.exception("Não foi possível gravar a auditoria da operação %s", operation)
 
 
+def _output_encoding() -> str:
+    """Usa a página OEM do Windows para decodificar utilitários nativos."""
+    if not is_windows():
+        return "utf-8"
+    try:
+        code_page = int(ctypes.windll.kernel32.GetOEMCP())
+        return f"cp{code_page}" if code_page else "utf-8"
+    except (AttributeError, OSError, ValueError):
+        return "utf-8"
+
+
 def _run(command: list[str], timeout: int) -> OperationResult:
     try:
         completed = subprocess.run(
             command,
             capture_output=True,
             text=True,
-            encoding="utf-8",
+            encoding=_output_encoding(),
             errors="replace",
             timeout=timeout,
             check=False,
