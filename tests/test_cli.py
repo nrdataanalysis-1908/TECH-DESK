@@ -6,8 +6,8 @@ def test_menu_prioritizes_executable_operations():
     executable = [entry for entry in entries if entry[2].startswith("operation:")]
     consultations = [entry for entry in entries if not entry[2].startswith("operation:")]
     assert len(executable) == 22
-    assert len(consultations) == 26
-    assert len(entries) == 48
+    assert len(consultations) == 27
+    assert len(entries) == 49
 
 
 def test_menu_numbers_are_unique_and_sequential():
@@ -16,5 +16,5 @@ def test_menu_numbers_are_unique_and_sequential():
         for group in MENU_GROUPS.values()
         for number, _, _ in group
     ]
-    assert sorted(numbers) == list(range(1, 49))
+    assert sorted(numbers) == list(range(1, 50))
     assert len(numbers) == len(set(numbers))

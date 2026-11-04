@@ -46,6 +46,7 @@ A interface utiliza exclusivamente a paleta azul e ciano da NR TECH. Ações de 
 - Teste de velocidade no navegador padrão.
 - Diagnóstico de CPU, memória, armazenamento, uptime, processos e serviços.
 - Inventário de software, USB, eventos e políticas de grupo.
+- Submenu de otimização de memória com ações individuais e sequência guiada, sempre com confirmação.
 - Download HTTPS limitado a 100 MiB, com redirecionamentos exclusivamente HTTPS e cálculo SHA-256. O arquivo é salvo, nunca executado pelo TECH DESK.
 
 ## Fluxo operacional

@@ -112,7 +112,7 @@ WINDOWS_DIAGNOSTICS: dict[str, str] = {
     "connections": "Get-NetTCPConnection -State Established -ErrorAction SilentlyContinue | Select-Object -First 40 | Format-Table -AutoSize",
     "routes": "route.exe print",
     "arp": "arp.exe -a",
-    "connectivity": "Test-NetConnection -ComputerName 1.1.1.1 -Port 443 -InformationLevel Detailed | Format-List",
+    "connectivity": "Test-NetConnection -ComputerName www.google.com -Port 443 -InformationLevel Detailed | Format-List",
     "processes": "Get-Process | Sort-Object CPU -Descending | Select-Object -First 20 Name, Id, CPU, WorkingSet64 | Format-Table -AutoSize",
     "services": "Get-Service | Sort-Object Status, DisplayName | Select-Object -First 60 Status, Name, DisplayName | Format-Table -AutoSize",
     "startup": "Get-CimInstance Win32_StartupCommand | Select-Object Name, Location, User | Format-Table -AutoSize",

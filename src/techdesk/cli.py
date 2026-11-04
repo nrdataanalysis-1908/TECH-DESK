@@ -89,6 +89,9 @@ MENU_GROUPS = {
         ("47", "Verificar atualizações disponíveis (Winget)", "winget"),
         ("48", "Uso de CPU e memória em tempo real", "performance"),
     ],
+    "06  |  OTIMIZAÇÃO GUIADA": [
+        ("49", "Otimizador de Memória (submenu)", "memory_optimizer"),
+    ],
 }
 
 
@@ -169,6 +172,86 @@ def _show_menu() -> None:
                 tag = "CONSULTA"
             print(_paint(f"  [{number:>2}] {label:<49} [{tag}]", CYAN))
     print(_paint("\n  [ 0] Encerrar TECH DESK", BLUE))
+
+
+def _run_memory_operation(key: str, input_fn: collections.abc.Callable[[str], str]) -> None:
+    operation = OPERATIONS[key]
+    print("\n" + _paint(f"OTIMIZADOR | {operation.title.upper()}", BLUE))
+    print(f"Risco: {operation.risk}")
+    print(operation.description)
+    if key == "cleanup_temp":
+        count, size = preview_temp_cleanup()
+        print(f"Prévia: {count} arquivo(s), {size / (1024**2):.2f} MiB elegíveis")
+    try:
+        answer = input_fn("Para confirmar, digite SIM: ").strip().upper()
+    except (EOFError, KeyboardInterrupt):
+        print("Operação cancelada.")
+        return
+    if answer != "SIM":
+        print("Operação cancelada.")
+        return
+    try:
+        result = execute_operation(key, confirm=lambda _: True)
+    except Exception:
+        logging.getLogger("techdesk").exception("Falha no otimizador: %s", key)
+        print(_paint("Falha inesperada. Consulte o log.", BLUE))
+        return
+    print(_paint(result.message, CYAN if result.success else BLUE))
+    if result.output:
+        print(result.output)
+
+
+def _memory_optimizer_menu(input_fn: collections.abc.Callable[[str], str]) -> None:
+    """Submenu guiado; ações de limpeza exigem confirmação individual."""
+    while True:
+        print("\n" + _paint("╔══════════════════════════════════════════════════════╗", BLUE))
+        print(_paint("║              OTIMIZADOR DE MEMÓRIA                  ║", CYAN))
+        print(_paint("╚══════════════════════════════════════════════════════╝", BLUE))
+        print(_paint("[1] Ver processos com maior consumo de memória", CYAN))
+        print(_paint("[2] Solicitar fechamento gracioso por PID", CYAN))
+        print(_paint("[3] Limpar temporários antigos", CYAN))
+        print(_paint("[4] Esvaziar Lixeira", CYAN))
+        print(_paint("[5] Reiniciar Windows Explorer", CYAN))
+        print(_paint("[6] Otimização guiada (3, 4 e 5)", CYAN))
+        print(_paint("[0] Voltar ao menu principal", BLUE))
+        try:
+            choice = input_fn("Selecione uma opção: ").strip()
+        except (EOFError, KeyboardInterrupt):
+            return
+        if choice == "0":
+            return
+        if choice == "1":
+            result = top_memory_processes()
+            print(result.message)
+            print(result.output)
+        elif choice == "2":
+            result = top_memory_processes()
+            print(result.output)
+            raw_pid = input_fn("Informe o PID desejado: ").strip()
+            if not raw_pid.isdecimal() or int(raw_pid) <= 0:
+                print(_paint("PID inválido.", BLUE))
+                continue
+            pid = int(raw_pid)
+            answer = input_fn(f"Solicitar fechamento normal do PID {pid}? Digite FECHAR: ").strip().upper()
+            if answer == "FECHAR":
+                result = close_process_gracefully(pid)
+                print(result.message)
+                if result.output:
+                    print(result.output)
+            else:
+                print("Ação cancelada.")
+        elif choice in {"3", "4", "5"}:
+            key = {"3": "cleanup_temp", "4": "empty_recycle_bin", "5": "restart_explorer"}[choice]
+            _run_memory_operation(key, input_fn)
+        elif choice == "6":
+            for key in ("cleanup_temp", "empty_recycle_bin", "restart_explorer"):
+                _run_memory_operation(key, input_fn)
+        else:
+            print(_paint("Opção inválida.", BLUE))
+        try:
+            input_fn("Pressione ENTER para continuar...")
+        except (EOFError, KeyboardInterrupt):
+            return
 
 
 def _menu(input_fn: collections.abc.Callable[[str], str] = input) -> int:
@@ -301,6 +384,8 @@ def _menu(input_fn: collections.abc.Callable[[str], str] = input) -> int:
                 input_fn("\nPressione ENTER para retornar ao menu...")
             except (EOFError, KeyboardInterrupt):
                 pass
+        elif topic == "memory_optimizer":
+            _memory_optimizer_menu(input_fn)
         elif topic == "close_process":
             raw_pid = input_fn("\nInforme o PID exibido no inventário: ").strip()
             if not raw_pid.isdecimal() or int(raw_pid) <= 0:
