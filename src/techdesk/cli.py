@@ -168,7 +168,7 @@ def _show_menu() -> None:
             else:
                 tag = "CONSULTA"
             print(_paint(f"  [{number:>2}] {label:<49} [{tag}]", CYAN))
-    print("\n  [ 0] Encerrar TECH DESK")
+    print(_paint("\n  [ 0] Encerrar TECH DESK", BLUE))
 
 
 def _menu(input_fn: collections.abc.Callable[[str], str] = input) -> int:

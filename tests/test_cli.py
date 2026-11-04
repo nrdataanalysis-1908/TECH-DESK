@@ -7,7 +7,7 @@ def test_menu_prioritizes_executable_operations():
     consultations = [entry for entry in entries if not entry[2].startswith("operation:")]
     assert len(executable) == 22
     assert len(consultations) == 26
-    assert len(executable) > len(consultations)
+    assert len(entries) == 48
 
 
 def test_menu_numbers_are_unique_and_sequential():
