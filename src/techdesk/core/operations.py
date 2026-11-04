@@ -1,12 +1,12 @@
 """Operações locais allowlisted, com confirmação, privilégio mínimo e auditoria."""
 
+import collections.abc
 import ctypes
 import json
 import logging
 import platform
 import subprocess
 import tempfile
-from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -253,7 +253,7 @@ def _cleanup_temp() -> OperationResult:
 
 def execute_operation(
     key: str,
-    confirm: Callable[[Operation], bool],
+    confirm: collections.abc.Callable[[Operation], bool],
 ) -> OperationResult:
     """Executa uma operação conhecida apenas após confirmação explícita."""
     if key not in OPERATIONS:
