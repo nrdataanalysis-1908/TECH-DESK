@@ -8,8 +8,12 @@ Central inteligente de suporte, diagnóstico e manutenção de endpoints Windows
 
 ![Python](https://img.shields.io/badge/Python-3.11+-2563EB?style=for-the-badge&logo=python&logoColor=white)
 ![Windows](https://img.shields.io/badge/Platform-Windows-2563EB?style=for-the-badge&logo=windows&logoColor=white)
+[![PyPI version](https://img.shields.io/pypi/v/tech-desk?style=for-the-badge&logo=pypi&logoColor=white)](https://pypi.org/project/tech-desk/)
+[![PyPI downloads](https://img.shields.io/pypi/dm/tech-desk?style=for-the-badge&logo=pypi&logoColor=white)](https://pypi.org/project/tech-desk/)
 ![CI](https://img.shields.io/badge/CI-Windows%20%7C%20Linux-0EA5E9?style=for-the-badge&logo=githubactions&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-2563EB?style=for-the-badge)
+
+[Instalar pelo PyPI](https://pypi.org/project/tech-desk/) · [Última versão](https://github.com/nrdataanalysis-1908/TECH-DESK/releases/latest) · [Código-fonte](https://github.com/nrdataanalysis-1908/TECH-DESK)
 
 </div>
 
@@ -22,6 +26,28 @@ Central inteligente de suporte, diagnóstico e manutenção de endpoints Windows
 O TECH DESK reúne rotinas de suporte técnico em uma CLI modular, com catálogo fechado de operações, confirmações explícitas, verificação de privilégios, timeout, captura de resultados e trilha de auditoria.
 
 A interface utiliza exclusivamente a paleta azul e ciano da NR TECH. Ações de manutenção, consultas e ferramentas auxiliares são organizadas em grupos próprios.
+
+## Instalação rápida
+
+O TECH DESK está publicado no Python Package Index (PyPI). Em um computador Windows com Python 3.11 ou superior, abra o PowerShell ou Prompt de Comando e execute:
+
+~~~powershell
+py -m pip install --upgrade tech-desk
+~~~
+
+Depois, inicie a ferramenta com:
+
+~~~powershell
+techdesk
+~~~
+
+Pronto: o menu principal será exibido no terminal. Não é necessário clonar o repositório para utilizar a versão publicada.
+
+Se o comando `techdesk` não for reconhecido após a instalação, feche e abra novamente o terminal. Caso persista, adicione ao PATH do usuário o diretório Scripts da instalação Python.
+
+- Projeto no PyPI: https://pypi.org/project/tech-desk/
+- Histórico de versões e arquivos: https://github.com/nrdataanalysis-1908/TECH-DESK/releases
+- Instalação de uma versão específica: `py -m pip install tech-desk==0.1.0`
 
 ## Recursos incorporados
 
@@ -74,9 +100,9 @@ A interface utiliza exclusivamente a paleta azul e ciano da NR TECH. Ações de 
 - Download HTTPS sem execução automática, com limite de tamanho, validação de redirecionamento e SHA-256.
 - Auditoria JSONL local sem registrar a saída potencialmente sensível dos comandos.
 
-## Instalação
+## Instalação para desenvolvimento
 
-PowerShell:
+Para contribuir com o código-fonte, clone o repositório e instale as dependências de desenvolvimento:
 
 ~~~powershell
 git clone https://github.com/nrdataanalysis-1908/TECH-DESK.git
@@ -87,7 +113,9 @@ python -m pip install --upgrade pip
 pip install -e ".[dev]"
 ~~~
 
-## Execução
+## Execução e diagnóstico
+
+Após a instalação para desenvolvimento, execute:
 
 ~~~powershell
 python -m techdesk.cli
@@ -115,6 +143,14 @@ O GitHub Actions executa testes e lint em Windows e Linux. CI verde não substit
 - Interface atual: CLI.
 - Persistência: auditoria local JSONL.
 - Desktop Tauri, API web, agente local autenticado e PostgreSQL centralizado: evolução planejada, ainda não implementada.
+
+## Distribuição e publicação
+
+- Distribuição Python oficial: [PyPI — tech-desk](https://pypi.org/project/tech-desk/).
+- Código-fonte, issues e contribuições: [GitHub — TECH-DESK](https://github.com/nrdataanalysis-1908/TECH-DESK).
+- Versões e artefatos de lançamento: [GitHub Releases](https://github.com/nrdataanalysis-1908/TECH-DESK/releases).
+
+O GitHub Packages não é utilizado para esta distribuição: o registro nativo de pacotes Python é o PyPI. As versões publicadas no PyPI são imutáveis; novas correções e funcionalidades devem ser lançadas com um novo número de versão.
 
 ## Estado de validação
 
