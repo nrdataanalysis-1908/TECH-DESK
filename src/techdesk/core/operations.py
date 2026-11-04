@@ -77,7 +77,7 @@ OPERATIONS = {
     "renew_ip": Operation(
         "renew_ip", "Renovar endereço IP (DHCP)",
         "Solicita nova concessão DHCP; a conectividade pode oscilar durante a renovação.",
-        "L2 — impacto temporário na rede", False, 90,
+        "L2 — impacto temporário na rede", True, 90,
     ),
     "reset_winsock": Operation(
         "reset_winsock", "Redefinir catálogo Winsock",
