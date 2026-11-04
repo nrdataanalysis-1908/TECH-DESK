@@ -183,7 +183,7 @@ def _menu(input_fn: Callable[[str], str] = input) -> int:
         elif topic.startswith("operation:"):
             operation_key = topic.split(":", 1)[1]
             operation = OPERATIONS[operation_key]
-            print("\\n" + "=" * 68)
+            print("\n" + "=" * 68)
             print(_paint(f" CENTRAL DE EXECUÇÃO | {operation.title.upper()}", BLUE))
             print("=" * 68)
             print(f" Ação             : {operation.title}")
@@ -198,19 +198,19 @@ def _menu(input_fn: Callable[[str], str] = input) -> int:
             try:
                 answer = input_fn(" Confirmação: ").strip().upper()
             except (EOFError, KeyboardInterrupt):
-                print("\\n Operação cancelada.", flush=True)
+                print("\n Operação cancelada.", flush=True)
                 continue
 
             if answer != "SIM":
                 execute_operation(operation_key, confirm=lambda _: False)
-                print(_paint("\\n STATUS: CANCELADA — nenhuma ação foi executada.", YELLOW), flush=True)
+                print(_paint("\n STATUS: CANCELADA — nenhuma ação foi executada.", YELLOW), flush=True)
                 try:
-                    input_fn("\\nPressione ENTER para retornar ao menu...")
+                    input_fn("\nPressione ENTER para retornar ao menu...")
                 except (EOFError, KeyboardInterrupt):
                     pass
                 continue
 
-            print("\\n" + "=" * 68, flush=True)
+            print("\n" + "=" * 68, flush=True)
             print(_paint(" EXECUTANDO OPERAÇÃO — NÃO FECHE ESTA JANELA", YELLOW), flush=True)
             print("=" * 68, flush=True)
             try:
@@ -219,14 +219,14 @@ def _menu(input_fn: Callable[[str], str] = input) -> int:
                 logging.getLogger("techdesk").exception(
                     "Falha inesperada ao executar a operação %s", operation_key
                 )
-                print(_paint("\\n STATUS: ERRO INTERNO — consulte o log do TECH DESK.", YELLOW), flush=True)
+                print(_paint("\n STATUS: ERRO INTERNO — consulte o log do TECH DESK.", YELLOW), flush=True)
                 try:
-                    input_fn("\\nPressione ENTER para retornar ao menu...")
+                    input_fn("\nPressione ENTER para retornar ao menu...")
                 except (EOFError, KeyboardInterrupt):
                     pass
                 continue
 
-            print("\\n" + "=" * 68)
+            print("\n" + "=" * 68)
             if result.success:
                 print(_paint(" STATUS FINAL: EXECUÇÃO CONCLUÍDA", GREEN))
             else:
@@ -240,7 +240,7 @@ def _menu(input_fn: Callable[[str], str] = input) -> int:
                 print(" SAÍDA DO COMANDO: o Windows não retornou texto.")
             print("=" * 68, flush=True)
             try:
-                input_fn("\\nPressione ENTER para retornar ao menu...")
+                input_fn("\nPressione ENTER para retornar ao menu...")
             except (EOFError, KeyboardInterrupt):
                 pass
         elif topic in WINDOWS_DIAGNOSTICS:
