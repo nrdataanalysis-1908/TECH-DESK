@@ -1,15 +1,15 @@
 """Operações locais allowlisted, com confirmação, privilégio mínimo e auditoria."""
 
-from collections.abc import Callable
 import ctypes
-from dataclasses import dataclass
-from datetime import UTC, datetime, timedelta
 import json
 import logging
-from pathlib import Path
 import platform
 import subprocess
 import tempfile
+from collections.abc import Callable
+from dataclasses import dataclass
+from datetime import UTC, datetime, timedelta
+from pathlib import Path
 
 
 LOGGER = logging.getLogger("techdesk.operations")
