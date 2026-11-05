@@ -408,6 +408,7 @@ def main() -> int:
     logging.getLogger("techdesk").info("TECH DESK iniciado")
 
     print(f"TECH DESK | NR TECH — {platform.system()} {platform.release()}")
+    print(_paint("Desenvolvido por Nadison Roberto | © 2026 NR TECH", CYAN))
     if args.diagnostics:
         _show_diagnostics()
         return 0
