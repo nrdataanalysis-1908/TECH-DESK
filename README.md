@@ -25,7 +25,6 @@ Central inteligente de suporte, diagnóstico e manutenção de endpoints Windows
 
 O TECH DESK reúne rotinas de suporte técnico em uma CLI modular, com catálogo fechado de operações, confirmações explícitas, verificação de privilégios, timeout, captura de resultados e trilha de auditoria.
 
-A interface utiliza exclusivamente a paleta azul e ciano da NR TECH. Ações de manutenção, consultas e ferramentas auxiliares são organizadas em grupos próprios.
 
 ## Instalação rápida
 
