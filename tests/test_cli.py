@@ -13,7 +13,8 @@ def test_menu_has_14_core_support_tools():
 
 def test_menu_numbers_are_unique_and_sequential():
     numbers = [int(number) for group in cli.MENU_GROUPS.values() for number, _, _ in group]
-    assert sorted(numbers) == list(range(1, 36))
+    assert sorted(numbers) == list(range(1, 37))
+    assert cli.MENU_GROUPS["04  |  MANUTENÇÃO AUTOMATIZADA"][0][2] == "maintenance"
     assert len(numbers) == len(set(numbers))
 
 
@@ -56,3 +57,12 @@ def test_windows_diagnostic_waits_before_returning_to_menu(monkeypatch):
 
     assert cli._menu(fake_input) == 0
     assert any("Pressione ENTER para retornar ao menu" in prompt for prompt in prompts)
+
+
+
+def test_maintenance_menu_is_reachable_and_returns_to_main_menu(monkeypatch):
+    inputs = iter(["36", "0", "0"])
+    monkeypatch.setattr(cli, "_show_menu", lambda: None)
+    monkeypatch.setattr(cli, "_maintenance_menu", lambda input_fn: None)
+
+    assert cli._menu(lambda _prompt: next(inputs)) == 0

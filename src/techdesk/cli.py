@@ -12,6 +12,12 @@ from techdesk.core.diagnostics import (
     run_windows_diagnostic,
 )
 from techdesk.core.logging_config import configure_logging
+from techdesk.core.maintenance import (
+    install_schedule,
+    remove_schedule,
+    run_maintenance,
+    schedule_status,
+)
 from techdesk.core.operations import (
     OPERATIONS,
     execute_operation,
@@ -71,6 +77,9 @@ MENU_GROUPS = {
         ("33", "Otimizador de Memória (submenu)", "memory_optimizer"),
         ("34", "Reiniciar Windows Explorer", "operation:restart_explorer"),
         ("35", "Esvaziar Lixeira", "operation:empty_recycle_bin"),
+    ],
+    "04  |  MANUTENÇÃO AUTOMATIZADA": [
+        ("36", "Manutenção automática (TEMP + Lixeira + agenda)", "maintenance"),
     ],
 }
 
@@ -242,6 +251,49 @@ def _memory_optimizer_menu(input_fn: collections.abc.Callable[[str], str]) -> No
             return
 
 
+def _maintenance_menu(input_fn: collections.abc.Callable[[str], str]) -> None:
+    while True:
+        print("\n" + _paint("MANUTENÇÃO AUTOMATIZADA | TECH DESK", BLUE))
+        print("[1] Executar manutenção agora (TEMP + Lixeira)")
+        print("[2] Configurar agendamento diário (08h e 18h)")
+        print("[3] Consultar agendamentos")
+        print("[4] Remover agendamentos")
+        print("[0] Voltar ao menu principal")
+        try:
+            choice = input_fn("Selecione uma opção: ").strip()
+        except (EOFError, KeyboardInterrupt):
+            return
+        if choice == "0":
+            return
+        if choice == "1":
+            if input_fn("Executar a manutenção agora? Digite SIM: ").strip().upper() != "SIM":
+                print("Operação cancelada.")
+                continue
+            result = run_maintenance()
+        elif choice == "2":
+            if input_fn("Registrar tarefas às 08h e 18h? Digite SIM: ").strip().upper() != "SIM":
+                print("Operação cancelada.")
+                continue
+            result = install_schedule()
+        elif choice == "3":
+            result = schedule_status()
+        elif choice == "4":
+            if input_fn("Remover as tarefas agendadas? Digite REMOVER: ").strip().upper() != "REMOVER":
+                print("Operação cancelada.")
+                continue
+            result = remove_schedule()
+        else:
+            print(_paint("Opção inválida.", YELLOW))
+            continue
+        print(_paint(result.message, CYAN if result.success else YELLOW))
+        if result.output:
+            print(result.output)
+        try:
+            input_fn("Pressione ENTER para continuar...")
+        except (EOFError, KeyboardInterrupt):
+            return
+
+
 def _menu(input_fn: collections.abc.Callable[[str], str] = input) -> int:
     actions = {
         number: (label, topic)
@@ -375,6 +427,8 @@ def _menu(input_fn: collections.abc.Callable[[str], str] = input) -> int:
                 pass
         elif topic == "memory_optimizer":
             _memory_optimizer_menu(input_fn)
+        elif topic == "maintenance":
+            _maintenance_menu(input_fn)
         elif topic == "close_process":
             raw_pid = input_fn("\nInforme o PID exibido no inventário: ").strip()
             if not raw_pid.isdecimal() or int(raw_pid) <= 0:

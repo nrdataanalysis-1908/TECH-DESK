@@ -4,11 +4,13 @@ import collections.abc
 import ctypes
 import json
 import logging
+import os
 import platform
+import stat
 import subprocess
 import tempfile
 from dataclasses import dataclass
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 from pathlib import Path
 
 from techdesk.core.support_tools import (
@@ -36,9 +38,9 @@ OPERATIONS = {
         "L1 — baixo impacto", True, 30,
     ),
     "cleanup_temp": Operation(
-        "cleanup_temp", "Limpar arquivos temporários antigos",
-        "Remove somente arquivos regulares na pasta TEMP do usuário com mais de 7 dias. "
-        "Pastas, links simbólicos e arquivos recentes são preservados.",
+        "cleanup_temp", "Limpar arquivos temporários",
+        "Remove todos os arquivos regulares da pasta TEMP do usuário, sem limite de idade. "
+        "Pastas e links simbólicos são preservados; arquivos bloqueados ou sem permissão são ignorados.",
         "L2 — exclusão de arquivos", False, 120,
     ),
     "restart_spooler": Operation(
@@ -222,52 +224,52 @@ def _run(command: list[str], timeout: int) -> OperationResult:
     )
 
 
+def _iter_temp_files(root: Path):
+    """Percorre somente arquivos regulares; não segue links nem pontos de reanálise."""
+    pending = [root]
+    reparse_flag = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400)
+    while pending:
+        current = pending.pop()
+        try:
+            with os.scandir(current) as entries:
+                for entry in entries:
+                    try:
+                        metadata = entry.stat(follow_symlinks=False)
+                        attributes = getattr(metadata, "st_file_attributes", 0)
+                        if stat.S_ISLNK(metadata.st_mode) or attributes & reparse_flag:
+                            continue
+                        if stat.S_ISDIR(metadata.st_mode):
+                            pending.append(Path(entry.path))
+                        elif stat.S_ISREG(metadata.st_mode):
+                            yield Path(entry.path), metadata.st_size
+                    except OSError:
+                        continue
+        except OSError:
+            continue
+
+
 def preview_temp_cleanup(now: datetime | None = None) -> tuple[int, int]:
-    """Conta arquivos elegíveis e bytes; não remove nem altera nada."""
+    """Conta todos os arquivos regulares elegíveis, sem limite de idade."""
+    del now  # Mantido por compatibilidade com chamadas existentes.
     root = Path(tempfile.gettempdir()).resolve()
-    cutoff = (now or datetime.now()).timestamp() - timedelta(days=7).total_seconds()
     count = total_bytes = 0
-    try:
-        for path in root.rglob("*"):
-            try:
-                if path.is_symlink() or not path.is_file():
-                    continue
-                resolved = path.resolve()
-                if root not in resolved.parents:
-                    continue
-                stat = path.stat()
-                if stat.st_mtime < cutoff:
-                    count += 1
-                    total_bytes += stat.st_size
-            except (OSError, PermissionError):
-                continue
-    except OSError:
-        return 0, 0
+    for _, size in _iter_temp_files(root):
+        count += 1
+        total_bytes += size
     return count, total_bytes
 
 
 def _cleanup_temp() -> OperationResult:
+    """Remove arquivos regulares da TEMP, sem limite de idade e sem seguir reparse points."""
     root = Path(tempfile.gettempdir()).resolve()
-    cutoff = (datetime.now() - timedelta(days=7)).timestamp()
     removed = failed = freed = 0
-    try:
-        for path in root.rglob("*"):
-            try:
-                if path.is_symlink() or not path.is_file():
-                    continue
-                resolved = path.resolve()
-                if root not in resolved.parents:
-                    continue
-                stat = path.stat()
-                if stat.st_mtime >= cutoff:
-                    continue
-                path.unlink()
-                removed += 1
-                freed += stat.st_size
-            except (OSError, PermissionError):
-                failed += 1
-    except OSError as exc:
-        return OperationResult(False, f"Falha ao percorrer a pasta TEMP: {exc}")
+    for path, size in _iter_temp_files(root):
+        try:
+            path.unlink()
+            removed += 1
+            freed += size
+        except OSError:
+            failed += 1
     return OperationResult(
         True,
         f"Limpeza concluída: {removed} arquivo(s) removido(s), "
