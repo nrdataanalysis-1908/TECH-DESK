@@ -165,6 +165,8 @@ def _show_menu() -> None:
             if topic.startswith("operation:"):
                 key = topic.split(":", 1)[1]
                 tag = "ADMIN" if OPERATIONS[key].requires_admin else "EXECUÇÃO"
+            elif topic == "maintenance":
+                tag = "EXECUÇÃO"
             else:
                 tag = "CONSULTA"
             print(_paint(f"  [{number:>2}] {label:<49} [{tag}]", CYAN))
