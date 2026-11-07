@@ -158,3 +158,8 @@ As rotinas possuem testes automatizados de catálogo, dispatch, cancelamento, pr
 ## Licença
 
 MIT. Consulte LICENSE.
+
+
+### Downloads de suporte
+
+O download de arquivos aceita somente HTTPS na porta padrão, valida redirecionamentos, verifica Content-Length quando fornecido, limita o arquivo a 100 MiB e calcula SHA-256. O TECH DESK apenas salva o conteúdo; não executa arquivos baixados.

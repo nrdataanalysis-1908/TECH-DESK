@@ -38,3 +38,12 @@ O TECH DESK administra endpoints. Uma falha de autorização ou validação pode
 ## Reporte de vulnerabilidades
 
 Não publique detalhes exploráveis de uma vulnerabilidade antes de coordenar sua correção. Abra uma issue privada ou utilize o canal de segurança configurado pelo mantenedor.
+
+
+## HTTPS download boundary
+
+The support downloader accepts only absolute HTTPS URLs on the default port, without embedded credentials, surrounding whitespace or control characters. The same policy is enforced for every redirect and the final response URL.
+
+If the server supplies Content-Length, it must be a decimal byte count within the 100 MiB limit and must match the number of bytes actually received. Incomplete or malformed responses are discarded; the tool never executes downloaded files.
+
+Windows device basenames (for example CON, NUL, COM1 and LPT1) are prefixed before the file is saved, preventing reserved-name failures on Windows.

@@ -133,24 +133,61 @@ def close_process_gracefully(pid: int) -> SupportToolResult:
 
 class _HTTPSOnlyRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
-        parsed = urllib.parse.urlparse(newurl)
-        if parsed.scheme.lower() != "https" or parsed.username or parsed.password:
-            raise urllib.error.HTTPError(newurl, code, "Redirecionamento não HTTPS bloqueado", headers, fp)
+        try:
+            _parse_https_url(newurl)
+        except ValueError as exc:
+            raise urllib.error.HTTPError(
+                newurl, code, "Destino de redirecionamento HTTPS inválido", headers, fp
+            ) from exc
         return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+
+def _parse_https_url(url: str) -> urllib.parse.ParseResult:
+    """Validate an HTTPS URL before opening a network connection."""
+    if (
+        not isinstance(url, str) or not url or url != url.strip()
+        or any(ord(character) < 0x20 or ord(character) == 0x7F for character in url)
+    ):
+        raise ValueError("URL deve ser uma string HTTPS sem espaços externos ou caracteres de controle.")
+    try:
+        parsed = urllib.parse.urlparse(url)
+        port = parsed.port
+    except ValueError as exc:
+        raise ValueError("URL HTTPS contém autoridade ou porta inválida.") from exc
+    if (
+        parsed.scheme.lower() != "https" or not parsed.hostname
+        or parsed.username is not None or parsed.password is not None
+        or port not in (None, 443)
+    ):
+        raise ValueError("somente HTTPS na porta padrão, sem credenciais, é permitido.")
+    return parsed
+
+
+_WINDOWS_RESERVED_BASENAMES = {
+    "CON", "PRN", "AUX", "NUL",
+    *(f"COM{number}" for number in range(1, 10)),
+    *(f"LPT{number}" for number in range(1, 10)),
+    "COM¹", "COM²", "COM³", "LPT¹", "LPT²", "LPT³",
+}
+
+
+def _safe_download_filename(raw_name: str) -> str:
+    filename = re.sub(r"[^A-Za-z0-9._-]", "_", raw_name).strip("._")
+    if not filename:
+        filename = "downloaded-file"
+    if filename.split(".", 1)[0].upper() in _WINDOWS_RESERVED_BASENAMES:
+        filename = f"download_{filename}"
+    return filename[:180]
 
 
 def download_https_file(url: str) -> SupportToolResult:
     """Baixa arquivo HTTPS para Downloads, limita tamanho e calcula SHA-256; não executa o arquivo."""
-    parsed = urllib.parse.urlparse(url.strip())
-    if (
-        parsed.scheme.lower() != "https" or not parsed.hostname
-        or parsed.username or parsed.password or parsed.port not in (None, 443)
-    ):
-        return SupportToolResult(False, "URL inválida: somente HTTPS na porta padrão é permitido.")
+    try:
+        parsed = _parse_https_url(url)
+    except ValueError as exc:
+        return SupportToolResult(False, f"URL inválida: {exc}")
     raw_name = Path(urllib.parse.unquote(parsed.path)).name
-    filename = re.sub(r"[^A-Za-z0-9._-]", "_", raw_name).strip("._")
-    if not filename or filename in {".", ".."}:
-        filename = "downloaded-file"
+    filename = _safe_download_filename(raw_name)
     destination_dir = Path.home() / "Downloads"
     temporary = None
     try:
@@ -168,11 +205,13 @@ def download_https_file(url: str) -> SupportToolResult:
         digest = hashlib.sha256()
         total = 0
         with opener.open(request, timeout=20) as response, temporary.open("xb") as stream:
-            if urllib.parse.urlparse(response.geturl()).scheme.lower() != "https":
-                raise ValueError("O destino final não utiliza HTTPS.")
+            _parse_https_url(response.geturl())
             declared = response.headers.get("Content-Length")
-            if declared and int(declared) > MAX_DOWNLOAD_BYTES:
-                raise ValueError("Arquivo excede o limite de 100 MiB.")
+            if declared is not None:
+                if not declared.strip().isdigit():
+                    raise ValueError("Content-Length retornado pelo servidor é inválido.")
+                if int(declared) > MAX_DOWNLOAD_BYTES:
+                    raise ValueError("Arquivo excede o limite de 100 MiB.")
             while True:
                 chunk = response.read(1024 * 1024)
                 if not chunk:
@@ -182,6 +221,10 @@ def download_https_file(url: str) -> SupportToolResult:
                     raise ValueError("Download interrompido: limite de 100 MiB excedido.")
                 stream.write(chunk)
                 digest.update(chunk)
+        if declared is not None and total != int(declared):
+            raise ValueError(
+                f"Content-Length divergente: esperado {int(declared)} bytes, recebidos {total}."
+            )
         if total == 0:
             raise ValueError("O servidor retornou um arquivo vazio.")
         temporary.replace(destination)
