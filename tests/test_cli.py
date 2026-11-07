@@ -57,3 +57,12 @@ def test_windows_diagnostic_waits_before_returning_to_menu(monkeypatch):
 
     assert cli._menu(fake_input) == 0
     assert any("Pressione ENTER para retornar ao menu" in prompt for prompt in prompts)
+
+
+
+def test_maintenance_menu_is_reachable_and_returns_to_main_menu(monkeypatch):
+    inputs = iter(["36", "0", "0"])
+    monkeypatch.setattr(cli, "_show_menu", lambda: None)
+    monkeypatch.setattr(cli, "_maintenance_menu", lambda input_fn: None)
+
+    assert cli._menu(lambda _prompt: next(inputs)) == 0
