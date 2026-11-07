@@ -139,14 +139,33 @@ class _HTTPSOnlyRedirect(urllib.request.HTTPRedirectHandler):
         return super().redirect_request(req, fp, code, msg, headers, newurl)
 
 
-def download_https_file(url: str) -> SupportToolResult:
-    """Baixa arquivo HTTPS para Downloads, limita tamanho e calcula SHA-256; não executa o arquivo."""
-    parsed = urllib.parse.urlparse(url.strip())
+def _parse_https_url(url: str) -> urllib.parse.ParseResult:
+    """Validate an HTTPS URL before opening a network connection."""
+    if (
+        not isinstance(url, str) or not url or url != url.strip()
+        or any(ord(character) < 0x20 or ord(character) == 0x7F for character in url)
+    ):
+        raise ValueError("URL deve ser uma string HTTPS sem espaços externos ou caracteres de controle.")
+    try:
+        parsed = urllib.parse.urlparse(url)
+        port = parsed.port
+    except ValueError as exc:
+        raise ValueError("URL HTTPS contém autoridade ou porta inválida.") from exc
     if (
         parsed.scheme.lower() != "https" or not parsed.hostname
-        or parsed.username or parsed.password or parsed.port not in (None, 443)
+        or parsed.username is not None or parsed.password is not None
+        or port not in (None, 443)
     ):
-        return SupportToolResult(False, "URL inválida: somente HTTPS na porta padrão é permitido.")
+        raise ValueError("Somente HTTPS na porta padrão, sem credenciais, é permitido.")
+    return parsed
+
+
+def download_https_file(url: str) -> SupportToolResult:
+    """Baixa arquivo HTTPS para Downloads, limita tamanho e calcula SHA-256; não executa o arquivo."""
+    try:
+        parsed = _parse_https_url(url)
+    except ValueError as exc:
+        return SupportToolResult(False, f"URL inválida: {exc}")
     raw_name = Path(urllib.parse.unquote(parsed.path)).name
     filename = re.sub(r"[^A-Za-z0-9._-]", "_", raw_name).strip("._")
     if not filename or filename in {".", ".."}:
