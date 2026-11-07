@@ -163,6 +163,23 @@ def _parse_https_url(url: str) -> urllib.parse.ParseResult:
     return parsed
 
 
+_WINDOWS_RESERVED_BASENAMES = {
+    "CON", "PRN", "AUX", "NUL",
+    *(f"COM{number}" for number in range(1, 10)),
+    *(f"LPT{number}" for number in range(1, 10)),
+    "COM¹", "COM²", "COM³", "LPT¹", "LPT²", "LPT³",
+}
+
+
+def _safe_download_filename(raw_name: str) -> str:
+    filename = re.sub(r"[^A-Za-z0-9._-]", "_", raw_name).strip("._")
+    if not filename:
+        filename = "downloaded-file"
+    if filename.split(".", 1)[0].upper() in _WINDOWS_RESERVED_BASENAMES:
+        filename = f"download_{filename}"
+    return filename[:180]
+
+
 def download_https_file(url: str) -> SupportToolResult:
     """Baixa arquivo HTTPS para Downloads, limita tamanho e calcula SHA-256; não executa o arquivo."""
     try:
@@ -170,9 +187,7 @@ def download_https_file(url: str) -> SupportToolResult:
     except ValueError as exc:
         return SupportToolResult(False, f"URL inválida: {exc}")
     raw_name = Path(urllib.parse.unquote(parsed.path)).name
-    filename = re.sub(r"[^A-Za-z0-9._-]", "_", raw_name).strip("._")
-    if not filename or filename in {".", ".."}:
-        filename = "downloaded-file"
+    filename = _safe_download_filename(raw_name)
     destination_dir = Path.home() / "Downloads"
     temporary = None
     try:
