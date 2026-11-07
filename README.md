@@ -54,7 +54,7 @@ Se o comando `techdesk` não for reconhecido após a instalação, feche e abra 
 
 | Área | Recursos |
 |---|---|
-| Sistema | Limpeza seletiva de temporários, SFC, DISM e CHKDSK online |
+| Sistema | Limpeza completa dos arquivos da TEMP do usuário, SFC, DISM e CHKDSK online |
 | Rede | Limpeza DNS/ARP, renovação DHCP, redefinição Winsock e conectividade |
 | Impressão e periféricos | Reinício do Spooler, limpeza da fila e inventário USB |
 | Segurança | Microsoft Defender, atualização de assinaturas, verificação rápida e Firewall |
@@ -93,7 +93,7 @@ Se o comando `techdesk` não for reconhecido após a instalação, feche e abra 
 - Confirmação explícita antes de qualquer alteração.
 - Privilégio mínimo e bloqueio quando a elevação é necessária.
 - subprocess com shell=False, timeout e captura do código de saída.
-- Limpeza de temporários limitada a arquivos regulares com mais de sete dias, preservando diretórios e links simbólicos.
+- Limpeza de temporários remove arquivos regulares da TEMP do usuário sem limite de idade; preserva diretórios e links simbólicos e ignora arquivos bloqueados ou sem permissão.
 - Limpeza de eventos exporta Application e Setup antes da exclusão; o log Security é preservado.
 - Fechamento de processos solicita encerramento gracioso; não utiliza encerramento forçado.
 - Download HTTPS sem execução automática, com limite de tamanho, validação de redirecionamento e SHA-256.
