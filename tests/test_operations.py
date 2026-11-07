@@ -5,6 +5,7 @@ from techdesk.core.operations import (
     OperationResult,
     execute_operation,
     preview_temp_cleanup,
+    _cleanup_temp,
 )
 
 
@@ -95,3 +96,57 @@ def test_operation_result_shape():
     result = OperationResult(True, "ok", "output")
     assert result.success
     assert result.message == "ok"
+
+
+
+def test_temp_cleanup_preview_includes_files_of_any_age(tmp_path):
+    old_file = tmp_path / "old.tmp"
+    recent_file = tmp_path / "recent.tmp"
+    nested_dir = tmp_path / "nested"
+    nested_dir.mkdir()
+    nested_file = nested_dir / "nested.tmp"
+    old_file.write_bytes(b"old")
+    recent_file.write_bytes(b"recent")
+    nested_file.write_bytes(b"nested")
+
+    with patch("techdesk.core.operations.tempfile.gettempdir", return_value=str(tmp_path)):
+        count, size = preview_temp_cleanup()
+
+    assert count == 3
+    assert size == len(b"old") + len(b"recent") + len(b"nested")
+
+
+def test_temp_cleanup_removes_all_files_but_preserves_directories(tmp_path):
+    old_file = tmp_path / "old.tmp"
+    recent_file = tmp_path / "recent.tmp"
+    nested_dir = tmp_path / "nested"
+    nested_dir.mkdir()
+    nested_file = nested_dir / "nested.tmp"
+    old_file.write_bytes(b"old")
+    recent_file.write_bytes(b"recent")
+    nested_file.write_bytes(b"nested")
+
+    with patch("techdesk.core.operations.tempfile.gettempdir", return_value=str(tmp_path)):
+        result = _cleanup_temp()
+
+    assert result.success
+    assert not old_file.exists()
+    assert not recent_file.exists()
+    assert not nested_file.exists()
+    assert nested_dir.is_dir()
+    assert "3 arquivo(s) removido(s)" in result.message
+
+
+def test_temp_cleanup_ignores_files_outside_temp_root(tmp_path):
+    root = tmp_path / "temp"
+    outside = tmp_path / "outside.tmp"
+    root.mkdir()
+    outside.write_text("keep", encoding="utf-8")
+    (root / "inside.tmp").write_text("remove", encoding="utf-8")
+
+    with patch("techdesk.core.operations.tempfile.gettempdir", return_value=str(root)):
+        result = _cleanup_temp()
+
+    assert result.success
+    assert outside.exists()
+    assert not (root / "inside.tmp").exists()
