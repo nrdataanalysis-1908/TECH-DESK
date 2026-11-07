@@ -128,7 +128,7 @@ WINDOWS_DIAGNOSTICS: dict[str, str] = {
     "performance": "$cpu=try{(Get-Counter '\\Processor(_Total)\\% Processor Time' -ErrorAction Stop).CounterSamples[0].CookedValue}catch{$null}; $os=Get-CimInstance Win32_OperatingSystem; $total=$os.TotalVisibleMemorySize; $free=$os.FreePhysicalMemory; Write-Output ('CPU: ' + $(if($null -ne $cpu){[math]::Round($cpu,1).ToString()+'%'}else{'indisponível'})); Write-Output ('RAM: ' + [math]::Round((($total-$free)/$total)*100,1) + '% utilizada (' + [math]::Round(($total-$free)/1MB,0) + ' / ' + [math]::Round($total/1MB,0) + ' MiB)')",
     "usb": "Get-PnpDevice -PresentOnly -ErrorAction SilentlyContinue | Where-Object InstanceId -Like 'USB*' | Select-Object -First 40 Status, Class, FriendlyName | Format-Table -AutoSize",
     "printers": "Get-Printer -ErrorAction SilentlyContinue | Format-Table Name, DriverName, PrinterStatus, Shared -AutoSize",
-    "environment": "Get-ChildItem Env: | Sort-Object Name | Format-Table -AutoSize",
+    "environment": "Get-ChildItem Env: | Sort-Object Name | Select-Object -ExpandProperty Name | Format-Table -AutoSize",
     "uptime": "Get-CimInstance Win32_OperatingSystem | Select-Object CSName, LastBootUpTime, LocalDateTime | Format-List",
     "users": "Get-LocalUser | Select-Object Name, Enabled, LastLogon, PasswordRequired | Format-Table -AutoSize",
 }
