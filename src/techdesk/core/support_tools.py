@@ -159,7 +159,7 @@ def _parse_https_url(url: str) -> urllib.parse.ParseResult:
         or parsed.username is not None or parsed.password is not None
         or port not in (None, 443)
     ):
-        raise ValueError("Somente HTTPS na porta padrão, sem credenciais, é permitido.")
+        raise ValueError("somente HTTPS na porta padrão, sem credenciais, é permitido.")
     return parsed
 
 
