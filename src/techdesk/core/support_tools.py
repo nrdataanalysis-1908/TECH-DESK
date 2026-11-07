@@ -206,6 +206,10 @@ def download_https_file(url: str) -> SupportToolResult:
                     raise ValueError("Download interrompido: limite de 100 MiB excedido.")
                 stream.write(chunk)
                 digest.update(chunk)
+        if declared is not None and total != int(declared):
+            raise ValueError(
+                f"Content-Length divergente: esperado {int(declared)} bytes, recebidos {total}."
+            )
         if total == 0:
             raise ValueError("O servidor retornou um arquivo vazio.")
         temporary.replace(destination)
