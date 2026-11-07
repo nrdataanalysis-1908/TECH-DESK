@@ -253,7 +253,7 @@ def _memory_optimizer_menu(input_fn: collections.abc.Callable[[str], str]) -> No
 
 def _maintenance_menu(input_fn: collections.abc.Callable[[str], str]) -> None:
     while True:
-        print("\\n" + _paint("MANUTENÇÃO AUTOMATIZADA | TECH DESK", BLUE))
+        print("\n" + _paint("MANUTENÇÃO AUTOMATIZADA | TECH DESK", BLUE))
         print("[1] Executar manutenção agora (TEMP + Lixeira)")
         print("[2] Configurar agendamento diário (08h e 18h)")
         print("[3] Consultar agendamentos")
