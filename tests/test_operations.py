@@ -95,3 +95,30 @@ def test_operation_result_shape():
     result = OperationResult(True, "ok", "output")
     assert result.success
     assert result.message == "ok"
+
+
+
+def test_temp_cleanup_removes_files_of_any_age_and_preserves_directories(tmp_path):
+    import os
+    import time
+
+    from techdesk.core.operations import _cleanup_temp
+
+    old_file = tmp_path / "old.tmp"
+    recent_file = tmp_path / "recent.tmp"
+    nested = tmp_path / "nested"
+    nested.mkdir()
+    old_file.write_text("old", encoding="utf-8")
+    recent_file.write_text("recent", encoding="utf-8")
+    (nested / "nested.tmp").write_text("nested", encoding="utf-8")
+    old_timestamp = time.time() - (30 * 86400)
+    os.utime(old_file, (old_timestamp, old_timestamp))
+
+    with patch("techdesk.core.operations.tempfile.gettempdir", return_value=str(tmp_path)):
+        result = _cleanup_temp()
+
+    assert result.success
+    assert not old_file.exists()
+    assert not recent_file.exists()
+    assert not (nested / "nested.tmp").exists()
+    assert nested.is_dir()
