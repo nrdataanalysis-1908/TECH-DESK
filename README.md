@@ -54,7 +54,7 @@ Se o comando `techdesk` não for reconhecido após a instalação, feche e abra 
 
 | Área | Recursos |
 |---|---|
-| Sistema | Limpeza seletiva de temporários, SFC, DISM e CHKDSK online |
+| Sistema | Limpeza completa dos arquivos elegíveis da TEMP do usuário, manutenção programada, SFC, DISM e CHKDSK online |
 | Rede | Limpeza DNS/ARP, renovação DHCP, redefinição Winsock e conectividade |
 | Impressão e periféricos | Reinício do Spooler, limpeza da fila e inventário USB |
 | Segurança | Microsoft Defender, atualização de assinaturas, verificação rápida e Firewall |
@@ -93,7 +93,7 @@ Se o comando `techdesk` não for reconhecido após a instalação, feche e abra 
 - Confirmação explícita antes de qualquer alteração.
 - Privilégio mínimo e bloqueio quando a elevação é necessária.
 - subprocess com shell=False, timeout e captura do código de saída.
-- Limpeza de temporários limitada a arquivos regulares com mais de sete dias, preservando diretórios e links simbólicos.
+- Limpeza da TEMP remove arquivos regulares sem limite de idade; preserva diretórios e links/reparse points e ignora arquivos bloqueados ou sem permissão.
 - Limpeza de eventos exporta Application e Setup antes da exclusão; o log Security é preservado.
 - Fechamento de processos solicita encerramento gracioso; não utiliza encerramento forçado.
 - Download HTTPS sem execução automática, com limite de tamanho, validação de redirecionamento e SHA-256.
@@ -123,6 +123,19 @@ python -m techdesk.cli --diagnostic usb
 python -m techdesk.cli --diagnostic gpresult
 python -m techdesk.cli --diagnostic performance
 ~~~
+
+### Manutenção automatizada fora do menu
+
+O TECH DESK também oferece manutenção por linha de comando e pelo atalho `TECH-DESK-Maintenance.bat`, sem abrir o menu principal. O módulo executa a limpeza da TEMP do usuário, tenta esvaziar a Lixeira pelo cmdlet nativo do Windows e registra resultados em `%LOCALAPPDATA%\\NRTech\\TechDesk\\logs`.
+
+~~~powershell
+python -m techdesk.maintenance
+python -m techdesk.maintenance --run
+python -m techdesk.maintenance --install-schedule
+python -m techdesk.maintenance --status
+~~~
+
+O agendamento registra ou atualiza tarefas diárias às 08h e 18h para o usuário atual, sem elevação administrativa. A Lixeira é tratada como uma etapa independente: uma falha nativa é registrada como alerta e nenhum arquivo interno de `$Recycle.Bin` é removido manualmente.
 
 Abra o terminal como Administrador somente quando uma operação exigir elevação. O TECH DESK não tenta elevar privilégios silenciosamente.
 
