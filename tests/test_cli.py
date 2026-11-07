@@ -13,7 +13,8 @@ def test_menu_has_14_core_support_tools():
 
 def test_menu_numbers_are_unique_and_sequential():
     numbers = [int(number) for group in cli.MENU_GROUPS.values() for number, _, _ in group]
-    assert sorted(numbers) == list(range(1, 36))
+    assert sorted(numbers) == list(range(1, 37))
+    assert cli.MENU_GROUPS["04  |  MANUTENÇÃO AUTOMATIZADA"][0][2] == "maintenance"
     assert len(numbers) == len(set(numbers))
 
 
