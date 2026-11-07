@@ -133,9 +133,12 @@ def close_process_gracefully(pid: int) -> SupportToolResult:
 
 class _HTTPSOnlyRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
-        parsed = urllib.parse.urlparse(newurl)
-        if parsed.scheme.lower() != "https" or parsed.username or parsed.password:
-            raise urllib.error.HTTPError(newurl, code, "Redirecionamento não HTTPS bloqueado", headers, fp)
+        try:
+            _parse_https_url(newurl)
+        except ValueError as exc:
+            raise urllib.error.HTTPError(
+                newurl, code, "Destino de redirecionamento HTTPS inválido", headers, fp
+            ) from exc
         return super().redirect_request(req, fp, code, msg, headers, newurl)
 
 
@@ -187,11 +190,13 @@ def download_https_file(url: str) -> SupportToolResult:
         digest = hashlib.sha256()
         total = 0
         with opener.open(request, timeout=20) as response, temporary.open("xb") as stream:
-            if urllib.parse.urlparse(response.geturl()).scheme.lower() != "https":
-                raise ValueError("O destino final não utiliza HTTPS.")
+            _parse_https_url(response.geturl())
             declared = response.headers.get("Content-Length")
-            if declared and int(declared) > MAX_DOWNLOAD_BYTES:
-                raise ValueError("Arquivo excede o limite de 100 MiB.")
+            if declared is not None:
+                if not declared.strip().isdigit():
+                    raise ValueError("Content-Length retornado pelo servidor é inválido.")
+                if int(declared) > MAX_DOWNLOAD_BYTES:
+                    raise ValueError("Arquivo excede o limite de 100 MiB.")
             while True:
                 chunk = response.read(1024 * 1024)
                 if not chunk:
