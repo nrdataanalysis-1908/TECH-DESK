@@ -130,7 +130,7 @@ def run_maintenance() -> OperationResult:
 def install_schedule() -> OperationResult:
     """Registra ou atualiza as tarefas diárias 08h/18h para o usuário atual."""
     python_exe = str(Path(sys.executable).resolve())
-    working_dir = str(Path.home())
+    working_dir = str(Path(__file__).resolve().parents[2])
     script = (
         "$ErrorActionPreference = 'Stop'; "
         f"$python = {_powershell_quote(python_exe)}; "
