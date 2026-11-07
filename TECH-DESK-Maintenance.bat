@@ -21,7 +21,7 @@ set "RESULT=%ERRORLEVEL%"
 if not "%RESULT%"=="0" (
     echo.
     echo [AVISO] A manutencao terminou com alerta. Consulte o log em:
-    echo %%LOCALAPPDATA%%\NRTech\TechDesk\logs\maintenance.log
+    echo %LOCALAPPDATA%\NRTech\TechDesk\logs\maintenance.log
 )
 if "%~1"=="" pause
 exit /b %RESULT%
