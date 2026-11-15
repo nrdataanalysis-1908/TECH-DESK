@@ -10,8 +10,8 @@ Central inteligente de suporte, diagnóstico e manutenção de endpoints Windows
 ![Windows](https://img.shields.io/badge/Sistema-Windows-2563EB?style=for-the-badge&logo=windows&logoColor=white)
 [![PyPI version](https://img.shields.io/badge/PyPI-v0.1.0-2563EB?style=for-the-badge&logo=pypi&logoColor=white)](https://pypi.org/project/tech-desk/)
 [![PyPI downloads](https://img.shields.io/badge/downloads%2Fmonth-visualizar%20no%20PyPI-2563EB?style=for-the-badge&logo=pypi&logoColor=white)](https://pypi.org/project/tech-desk/)
-![CI](https://img.shields.io/badge/CI-Windows%20%7C%20Linux-0EA5E9?style=for-the-badge&logo=githubactions&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-2563EB?style=for-the-badge)
+![CI](https://img.shields.io/badge/Integra%C3%A7%C3%A3o%20cont%C3%ADnua-Windows%20%7C%20Linux-0EA5E9?style=for-the-badge&logo=githubactions&logoColor=white)
+![License](https://img.shields.io/badge/Licen%C3%A7a-MIT-2563EB?style=for-the-badge)
 
 [Instalar pelo PyPI](https://pypi.org/project/tech-desk/) · [Última versão](https://github.com/nrdataanalysis-1908/TECH-DESK/releases/latest) · [Código-fonte](https://github.com/nrdataanalysis-1908/TECH-DESK)
 
