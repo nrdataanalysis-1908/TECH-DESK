@@ -11,7 +11,7 @@ def test_clear_recycle_bin_uses_native_command_and_reports_failure():
         result = maintenance.clear_recycle_bin()
 
     assert not result.success
-    assert "Nenhum metadado interno" in result.message
+    assert "No internal metadata" in result.message
     assert "Clear-RecycleBin" in run.call_args.args[0]
 
 
@@ -51,6 +51,6 @@ def test_install_schedule_is_idempotent_and_uses_expected_hours():
 
 def test_task_names_are_stable():
     assert maintenance.TASK_NAMES == (
-        "TECH DESK - Limpeza diaria 8h",
-        "TECH DESK - Limpeza diaria 18h",
+        "TECH DESK - Daily cleanup 8 AM",
+        "TECH DESK - Daily cleanup 6 PM",
     )
