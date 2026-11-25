@@ -156,19 +156,19 @@ def _show_menu() -> None:
     print(_paint("║                    TECH DESK  |  NR TECH                     ║", CYAN))
     print(_paint("║             IT MANAGEMENT & SUPPORT CENTER                   ║", BLUE))
     print(_paint("╚══════════════════════════════════════════════════════════════╝", CYAN))
-    print("  [CONSULTA]  Read-only")
-    print("  [EXECUÇÃO]  Changes the system after confirmation")
+    print("  [QUERY]     Read-only")
+    print("  [EXECUTION] Changes the system after confirmation")
     print("  [ADMIN]     Requires elevated privileges")
     for group, entries in MENU_GROUPS.items():
         print("\n" + _paint(group, BLUE))
         for number, label, topic in entries:
             if topic.startswith("operation:"):
                 key = topic.split(":", 1)[1]
-                tag = "ADMIN" if OPERATIONS[key].requires_admin else "EXECUÇÃO"
+                tag = "ADMIN" if OPERATIONS[key].requires_admin else "EXECUTION"
             elif topic == "maintenance":
-                tag = "EXECUÇÃO"
+                tag = "EXECUTION"
             else:
-                tag = "CONSULTA"
+                tag = "QUERY"
             print(_paint(f"  [{number:>2}] {label:<49} [{tag}]", CYAN))
     print(_paint("\n  [ 0] Exit TECH DESK", BLUE))
 
@@ -186,7 +186,7 @@ def _run_memory_operation(key: str, input_fn: collections.abc.Callable[[str], st
     except (EOFError, KeyboardInterrupt):
         print("Operation cancelled.")
         return
-    if answer != "SIM":
+    if answer != "YES":
         print("Operation cancelled.")
         return
     try:
@@ -204,7 +204,7 @@ def _memory_optimizer_menu(input_fn: collections.abc.Callable[[str], str]) -> No
     """Submenu guiado; ações de limpeza exigem confirmação individual."""
     while True:
         print("\n" + _paint("╔══════════════════════════════════════════════════════╗", BLUE))
-        print(_paint("║              OPTIMIZER DE MEMÓRIA                  ║", CYAN))
+        print(_paint("║                  MEMORY OPTIMIZER                  ║", CYAN))
         print(_paint("╚══════════════════════════════════════════════════════╝", BLUE))
         print(_paint("[1] View top memory-consuming processes", CYAN))
         print(_paint("[2] Request graceful shutdown by PID", CYAN))
@@ -232,7 +232,7 @@ def _memory_optimizer_menu(input_fn: collections.abc.Callable[[str], str]) -> No
                 continue
             pid = int(raw_pid)
             answer = input_fn(f"Request normal shutdown of PID {pid}? Type CLOSE: ").strip().upper()
-            if answer == "FECHAR":
+            if answer == "CLOSE":
                 result = close_process_gracefully(pid)
                 print(result.message)
                 if result.output:
@@ -268,19 +268,19 @@ def _maintenance_menu(input_fn: collections.abc.Callable[[str], str]) -> None:
         if choice == "0":
             return
         if choice == "1":
-            if input_fn("Run maintenance now? Type YES: ").strip().upper() != "SIM":
+            if input_fn("Run maintenance now? Type YES: ").strip().upper() != "YES":
                 print("Operation cancelled.")
                 continue
             result = run_maintenance()
         elif choice == "2":
-            if input_fn("Register tasks at 8 AM and 6 PM? Type YES: ").strip().upper() != "SIM":
+            if input_fn("Register tasks at 8 AM and 6 PM? Type YES: ").strip().upper() != "YES":
                 print("Operation cancelled.")
                 continue
             result = install_schedule()
         elif choice == "3":
             result = schedule_status()
         elif choice == "4":
-            if input_fn("Remove scheduled tasks? Type REMOVE: ").strip().upper() != "REMOVER":
+            if input_fn("Remove scheduled tasks? Type REMOVE: ").strip().upper() != "REMOVE":
                 print("Operation cancelled.")
                 continue
             result = remove_schedule()
@@ -314,7 +314,7 @@ def _menu(input_fn: collections.abc.Callable[[str], str] = input) -> int:
             print("TECH DESK has exited.")
             return 0
         if choice not in actions:
-            print(_paint("Invalid option. Tente novamente.", YELLOW))
+            print(_paint("Invalid option. Try again.", YELLOW))
             continue
 
         label, topic = actions[choice]
@@ -351,7 +351,7 @@ def _menu(input_fn: collections.abc.Callable[[str], str] = input) -> int:
                 print("\n Operation cancelled.", flush=True)
                 continue
 
-            if answer != "SIM":
+            if answer != "YES":
                 execute_operation(operation_key, confirm=lambda _: False)
                 print(_paint("\n STATUS: CANCELLED — no action was performed.", YELLOW), flush=True)
                 try:
@@ -367,7 +367,7 @@ def _menu(input_fn: collections.abc.Callable[[str], str] = input) -> int:
                 result = execute_operation(operation_key, confirm=lambda _: True)
             except Exception:
                 logging.getLogger("techdesk").exception(
-                    "Falha inesperada ao executar a operação %s", operation_key
+                    "Unexpected failure while running operation %s", operation_key
                 )
                 print(_paint("\n STATUS: INTERNAL ERROR — check the TECH DESK log.", YELLOW), flush=True)
                 try:
@@ -408,7 +408,7 @@ def _menu(input_fn: collections.abc.Callable[[str], str] = input) -> int:
                 print(_paint("Download cancelled: empty URL.", YELLOW))
                 continue
             answer = input_fn("Confirm download (100 MiB limit, no execution)? Type DOWNLOAD: ").strip().upper()
-            if answer != "BAIXAR":
+            if answer != "DOWNLOAD":
                 print("Download cancelled.")
                 continue
             result = download_https_file(url)
@@ -432,13 +432,13 @@ def _menu(input_fn: collections.abc.Callable[[str], str] = input) -> int:
         elif topic == "maintenance":
             _maintenance_menu(input_fn)
         elif topic == "close_process":
-            raw_pid = input_fn("\nInforme o PID exibido no inventário: ").strip()
+            raw_pid = input_fn("\nEnter the PID shown in the inventory: ").strip()
             if not raw_pid.isdecimal() or int(raw_pid) <= 0:
                 print(_paint("Invalid PID.", YELLOW))
                 continue
             pid = int(raw_pid)
             answer = input_fn(f"Request normal shutdown of PID {pid}? Type CLOSE: ").strip().upper()
-            if answer != "FECHAR":
+            if answer != "CLOSE":
                 print("Action cancelled.")
                 continue
             result = close_process_gracefully(pid)
