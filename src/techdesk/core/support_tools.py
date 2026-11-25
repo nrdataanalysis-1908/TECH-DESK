@@ -1,4 +1,4 @@
-"""Ferramentas adicionais de suporte Windows com comandos fixos e validação local."""
+"""Additional Windows support tools with fixed commands and local validation."""
 
 import hashlib
 import re
@@ -81,7 +81,7 @@ def backup_event_logs(log_names: tuple[str, ...] = EVENT_LOGS) -> SupportToolRes
             exported.append(name)
         else:
             failures.append(f"{name}: {result.message} {result.output}".strip())
-    summary = f"Backups exported: {', '.join(exported) if exported else 'none'}. Pasta: {destination}"
+    summary = f"Backups exported: {', '.join(exported) if exported else 'none'}. Directory: {destination}"
     if failures:
         return SupportToolResult(False, summary + "\nFailures: " + " | ".join(failures))
     return SupportToolResult(True, summary)
@@ -118,7 +118,7 @@ def top_memory_processes() -> SupportToolResult:
 
 
 def close_process_gracefully(pid: int) -> SupportToolResult:
-    """Solicita fechamento pela janela principal; nunca força a terminação."""
+    """Requests shutdown through the main window; never forces termination."""
     if isinstance(pid, bool) or not isinstance(pid, int) or pid <= 0:
         raise ValueError("Invalid PID.")
     script = (
