@@ -25,7 +25,7 @@ def test_unknown_operation_is_rejected():
     except ValueError as exc:
         assert "not authorized" in str(exc)
     else:
-        raise AssertionError("Operação arbitrária deveria ser rejeitada.")
+        raise AssertionError("Arbitrary operations should be rejected.")
 
 
 def test_cancelled_operation_does_not_run():
