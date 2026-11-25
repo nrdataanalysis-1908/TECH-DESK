@@ -1,4 +1,4 @@
-"""Operações locais allowlisted, com confirmação, privilégio mínimo e auditoria."""
+"""Allowlisted local operations with confirmation, least privilege, and auditing."""
 
 import collections.abc
 import ctypes
@@ -109,7 +109,7 @@ OPERATIONS = {
     "quick_defender_scan": Operation(
         "quick_defender_scan", "Run Microsoft Defender quick scan",
         "Starts a Microsoft Defender quick scan. The scan continues in the background.",
-        "L1 — scan de segurança", True, 120,
+        "L1 — security scan", True, 120,
     ),
     "update_defender_signatures": Operation(
         "update_defender_signatures", "Update Microsoft Defender signatures",
@@ -170,7 +170,7 @@ def is_admin() -> bool:
 
 
 def _audit(operation: str, result: str) -> None:
-    """Registra metadados sem incluir saída potencialmente sensível dos comandos."""
+    """Records metadata without including potentially sensitive command output."""
     try:
         audit_dir = Path.home() / "AppData" / "Local" / "NRTech" / "TechDesk" / "logs"
         audit_dir.mkdir(parents=True, exist_ok=True)
@@ -187,7 +187,7 @@ def _audit(operation: str, result: str) -> None:
 
 
 def _output_encoding() -> str:
-    """Usa a página OEM do Windows para decodificar utilitários nativos."""
+    """Uses the Windows OEM code page to decode native utilities."""
     if not is_windows():
         return "utf-8"
     try:
@@ -225,7 +225,7 @@ def _run(command: list[str], timeout: int) -> OperationResult:
 
 
 def _iter_temp_files(root: Path):
-    """Percorre somente arquivos regulares; não segue links nem pontos de reanálise."""
+    """Iterates over regular files only; does not follow links or reparse points."""
     pending = [root]
     reparse_flag = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400)
     while pending:
@@ -249,7 +249,7 @@ def _iter_temp_files(root: Path):
 
 
 def preview_temp_cleanup(now: datetime | None = None) -> tuple[int, int]:
-    """Conta todos os arquivos regulares eligible, sem limite de idade."""
+    """Counts all eligible regular files, regardless of age."""
     del now  # Mantido por compatibilidade com chamadas existentes.
     root = Path(tempfile.gettempdir()).resolve()
     count = total_bytes = 0
@@ -260,7 +260,7 @@ def preview_temp_cleanup(now: datetime | None = None) -> tuple[int, int]:
 
 
 def _cleanup_temp() -> OperationResult:
-    """Remove arquivos regulares da TEMP, sem limite de idade e sem seguir reparse points."""
+    """Removes regular files from TEMP regardless of age and without following reparse points."""
     root = Path(tempfile.gettempdir()).resolve()
     removed = failed = freed = 0
     for path, size in _iter_temp_files(root):
@@ -272,8 +272,8 @@ def _cleanup_temp() -> OperationResult:
             failed += 1
     return OperationResult(
         True,
-        f"Limpeza concluída: {removed} file(s) removido(s), "
-        f"{freed / (1024**2):.2f} MiB liberados; {failed} ignorado(s) por bloqueio/permissão.",
+        f"Cleanup completed: {removed} file(s) removed, "
+        f"{freed / (1024**2):.2f} MiB freed; {failed} skipped due to locks or permissions.",
     )
 
 
@@ -281,22 +281,22 @@ def execute_operation(
     key: str,
     confirm: collections.abc.Callable[[Operation], bool],
 ) -> OperationResult:
-    """Executa uma operação conhecida apenas após confirmação explícita."""
+    """Runs a known operation only after explicit confirmation."""
     if key not in OPERATIONS:
-        raise ValueError(f"Operação not authorized: {key}")
+        raise ValueError(f"Operation not authorized: {key}")
     operation = OPERATIONS[key]
 
     if not is_windows():
-        return OperationResult(False, "Operações administrativas disponíveis Windows only.")
+        return OperationResult(False, "Administrative operations are available on Windows only.")
     if not confirm(operation):
         _audit(key, "cancelled")
-        return OperationResult(False, "Operação cancelled pelo usuário.")
+        return OperationResult(False, "Operation cancelled by the user.")
     if operation.requires_admin and not is_admin():
         _audit(key, "blocked_not_admin")
         return OperationResult(
             False,
-            "Esta operação exige PowerShell/terminal executado como Administrator. "
-            "Feche o TECH DESK e reabra-o com privilégios elevados.",
+            "This operation requires PowerShell/a terminal running as an Administrator. "
+            "Close TECH DESK and reopen it with elevated privileges.",
         )
 
     if key == "cleanup_temp":
@@ -414,7 +414,7 @@ def execute_operation(
             operation.timeout_seconds,
         )
     else:
-        raise ValueError(f"Operação sem executor: {key}")
+        raise ValueError(f"Operation has no executor: {key}")
 
     _audit(key, "success" if result.success else "failure")
     return result
