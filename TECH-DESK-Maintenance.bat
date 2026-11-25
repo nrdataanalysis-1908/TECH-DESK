@@ -1,8 +1,8 @@
 @echo off
 setlocal
-title TECH DESK - Manutencao automatica
+title TECH DESK - Automated Maintenance
 
-rem Permite executar o pacote diretamente do checkout, sem alterar o PATH.
+rem Allows the package to run directly from the checkout without modifying PATH.
 set "PYTHONPATH=%~dp0src;%PYTHONPATH%"
 
 if exist "%~dp0.venv\Scripts\python.exe" (
@@ -10,7 +10,7 @@ if exist "%~dp0.venv\Scripts\python.exe" (
 ) else (
     where py >nul 2>&1
     if errorlevel 1 (
-        echo [ERRO] Python Launcher nao encontrado. Instale Python 3.11 ou superior.
+        echo [ERROR] Python Launcher not found. Install Python 3.11 or later.
         pause
         exit /b 1
     )
@@ -20,7 +20,7 @@ if exist "%~dp0.venv\Scripts\python.exe" (
 set "RESULT=%ERRORLEVEL%"
 if not "%RESULT%"=="0" (
     echo.
-    echo [AVISO] A manutencao terminou com alerta. Consulte o log em:
+    echo [WARNING] Maintenance finished with a warning. Check the log at:
     echo %LOCALAPPDATA%\NRTech\TechDesk\logs\maintenance.log
 )
 if "%~1"=="" pause
