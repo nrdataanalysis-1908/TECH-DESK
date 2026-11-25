@@ -2,7 +2,7 @@
 setlocal
 title TECH DESK - Automated Maintenance
 
-rem Permite executar o pacote diretamente do checkout, sem alterar o PATH.
+rem Allows the package to run directly from the checkout without modifying PATH.
 set "PYTHONPATH=%~dp0src;%PYTHONPATH%"
 
 if exist "%~dp0.venv\Scripts\python.exe" (
