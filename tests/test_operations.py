@@ -23,7 +23,7 @@ def test_unknown_operation_is_rejected():
     try:
         execute_operation("run-anything", lambda _: True)
     except ValueError as exc:
-        assert "não autorizada" in str(exc)
+        assert "not authorized" in str(exc)
     else:
         raise AssertionError("Operação arbitrária deveria ser rejeitada.")
 
@@ -32,14 +32,14 @@ def test_cancelled_operation_does_not_run():
     with patch("techdesk.core.operations.is_windows", return_value=True):
         result = execute_operation("flush_dns", lambda _: False)
     assert not result.success
-    assert "cancelada" in result.message
+    assert "cancelled" in result.message
 
 
 def test_non_windows_operation_does_not_run():
     with patch("techdesk.core.operations.is_windows", return_value=False):
         result = execute_operation("flush_dns", lambda _: True)
     assert not result.success
-    assert "somente no Windows" in result.message
+    assert "Windows only" in result.message
 
 
 def test_admin_operation_is_blocked_without_elevation():
@@ -49,7 +49,7 @@ def test_admin_operation_is_blocked_without_elevation():
     ):
         result = execute_operation("sfc_scan", lambda _: True)
     assert not result.success
-    assert "Administrador" in result.message
+    assert "Administrator" in result.message
 
 
 def test_all_operations_have_a_dispatcher():
@@ -75,7 +75,7 @@ def test_all_privileged_operations_are_blocked_without_elevation():
         for key in privileged:
             result = execute_operation(key, lambda _: True)
             assert not result.success, key
-            assert "Administrador" in result.message, key
+            assert "Administrator" in result.message, key
 
 
 def test_output_encoding_uses_utf8_off_windows():
