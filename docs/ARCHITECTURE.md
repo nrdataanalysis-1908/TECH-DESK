@@ -1,8 +1,8 @@
-# Arquitetura do TECH DESK
+# TECH DESK Architecture
 
-## 1. Objetivo
+## 1. Objective
 
-Construir uma plataforma modular de suporte e gestão de TI com interfaces distintas, núcleo compartilhado e execução operacional rastreável.
+Build a modular IT support and management platform with distinct interfaces, a shared core, and traceable operational execution.
 
 ## 2. Componentes
 
@@ -11,13 +11,13 @@ Construir uma plataforma modular de suporte e gestão de TI com interfaces disti
 Responsável por:
 - configuração e parâmetros de execução;
 - contratos e catálogo de operações;
-- validação de entrada e pré-condições;
+- validação de entrada e preconditions;
 - políticas de autorização;
 - logging, auditoria e tratamento uniforme de erros.
 
-### Adaptadores Windows (PowerShell)
+### Windows Adapters (PowerShell)
 
-Integram-se aos recursos nativos do Windows: inventário, serviços, processos, rede, eventos, armazenamento e manutenção. Os adaptadores não devem conter regras de interface.
+Integrate with native Windows capabilities: inventory, services, processes, networking, events, storage, and maintenance. Adapters must not contain interface logic.
 
 ### Interfaces
 
@@ -25,11 +25,11 @@ Integram-se aos recursos nativos do Windows: inventário, serviços, processos, 
 - Desktop: Tauri, para operação local.
 - Web: Next.js, para gestão e visualização centralizadas.
 
-As interfaces consomem contratos comuns; não duplicam regras de negócio.
+Interfaces consume shared contracts; they do not duplicate business logic.
 
 ### Agente local e API
 
-O agente local recebe solicitações autenticadas e executa exclusivamente operações previamente cadastradas. O painel web nunca deve enviar comandos shell livres ao endpoint.
+O agente local recebe solicitações autenticadas e executa exclusivamente operações previamente cadastradas. The web dashboard must never send free-form shell commands to the endpoint.
 
 ### Persistência
 
@@ -37,41 +37,41 @@ O agente local recebe solicitações autenticadas e executa exclusivamente opera
 - PostgreSQL: modo centralizado e multiusuário.
 - Logs operacionais: trilha de auditoria com retenção configurável.
 
-## 3. Fluxo de uma operação
+## 3. Operation Workflow
 
-1. Interface solicita uma operação identificada por código.
-2. Core valida parâmetros, política e pré-condições.
-3. O usuário confirma quando o nível de risco exigir.
-4. Adaptador autorizado executa a rotina com timeout.
-5. Resultado é normalizado e registrado.
-6. Interface apresenta estado, evidências e eventual ação corretiva.
+1. The interface requests an operation identified by a key.
+2. The core validates parameters, policy, and preconditions.
+3. The user confirms when required by the risk level.
+4. The authorized adapter executes the routine with a timeout.
+5. The result is normalized and recorded.
+6. The interface presents the status, evidence, and any corrective action.
 
-## 4. Contrato mínimo de operação
+## 4. Minimum Operation Contract
 
-Cada operação deverá declarar:
-- identificador estável;
-- nome e descrição;
-- categoria;
-- parâmetros tipados;
-- privilégio requerido;
-- classificação de risco;
-- confirmação obrigatória ou não;
-- pré-condições;
+Each operation must declare:
+- stable identifier;
+- name and description;
+- category;
+- typed parameters;
+- required privilege;
+- risk classification;
+- whether confirmation is required;
+- preconditions;
 - timeout;
-- possibilidade de reversão;
-- resultado estruturado.
+- reversibility;
+- structured result.
 
-## 5. Princípios
+## 5. Principles
 
-- baixo acoplamento e alta coesão;
-- interfaces substituíveis;
-- operações idempotentes quando possível;
-- falhas explícitas, nunca silenciosas;
-- telemetria sem dados sensíveis;
-- testes unitários e testes de integração por adaptador;
-- compatibilidade documentada por versão do Windows.
+- low coupling and high cohesion;
+- replaceable interfaces;
+- idempotent operations whenever possible;
+- explicit failures, never silent failures;
+- telemetry without sensitive data;
+- unit tests and adapter-level integration tests;
+- compatibility documented by Windows version.
 
-## 6. Roadmap técnico
+## 6. Technical Roadmap
 
 1. Fundação Python e CLI.
 2. Catálogo e contratos de operação.
