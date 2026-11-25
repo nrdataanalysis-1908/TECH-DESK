@@ -1,17 +1,17 @@
-# Adaptadores PowerShell
+# PowerShell Adapters
 
-As rotinas administrativas serão implementadas aqui, de forma modular.
+Administrative routines will be implemented here as modular components.
 
-## Requisitos por script
+## Script Requirements
 
-- Validar versão do Windows e privilégios.
-- Receber parâmetros explícitos e tipados.
-- Utilizar `SupportsShouldProcess` e `-WhatIf` quando aplicável.
-- Retornar códigos de saída previsíveis.
-- Aplicar timeout e tratamento de exceções.
-- Registrar início, término, duração e resultado.
-- Nunca incorporar credenciais.
-- Nunca executar texto livre como comando.
-- Documentar impacto, reversibilidade e pré-condições.
+- Validate the Windows version and required privileges.
+- Accept explicit, strongly typed parameters.
+- Use `SupportsShouldProcess` and `-WhatIf` where applicable.
+- Return predictable exit codes.
+- Apply timeouts and exception handling.
+- Log start time, end time, duration, and result.
+- Never embed credentials.
+- Never execute free-form text as a command.
+- Document impact, reversibility, and preconditions.
 
-Nenhuma rotina destrutiva é habilitada nesta etapa inicial.
+No destructive routine is enabled at this initial stage.

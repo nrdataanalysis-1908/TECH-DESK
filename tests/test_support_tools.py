@@ -16,7 +16,7 @@ from techdesk.core.support_tools import (
 def test_download_rejects_non_https_without_network():
     result = download_https_file("http://example.com/file.zip")
     assert not result.success
-    assert "somente HTTPS" in result.message
+    assert "Only HTTPS" in result.message
 
 def test_download_rejects_credentials_and_nonstandard_port():
     assert not download_https_file("https://user:pass@example.com/file").success
@@ -35,7 +35,7 @@ def test_event_logs_are_not_cleared_when_backup_fails():
     with patch("techdesk.core.support_tools.backup_event_logs", return_value=SupportToolResult(False, "backup failed")), patch("techdesk.core.support_tools._run") as run:
         result = clear_event_logs_after_backup()
     assert not result.success
-    assert "abortada" in result.message
+    assert "aborted" in result.message
     run.assert_not_called()
 
 def test_event_log_cleanup_only_targets_application_and_setup_after_backup():

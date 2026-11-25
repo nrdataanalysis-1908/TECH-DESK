@@ -1,22 +1,22 @@
 ## Resumo
-<!-- Descreva objetivamente o que mudou e por quê. -->
+<!-- Describe what changed and why. -->
 
-## Tipo de alteração
-- [ ] Correção
-- [ ] Nova funcionalidade
-- [ ] Segurança
-- [ ] Documentação
-- [ ] Refatoração
-- [ ] CI/CD ou empacotamento
+## Change Type
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Security
+- [ ] Documentation
+- [ ] Refactoring
+- [ ] CI/CD or packaging
 
-## Validação
-- [ ] Testes automatizados executados
-- [ ] `ruff check .` executado
-- [ ] Fluxo manual validado em Windows (quando aplicável)
-- [ ] Não foram introduzidos comandos arbitrários ou uso de `shell=True`
+## Validation
+- [ ] Automated tests executed
+- [ ] `ruff check .` completed
+- [ ] Manual workflow validated on Windows (where applicable)
+- [ ] No arbitrary commands or `shell=True` usage were introduced
 
-## Segurança e impacto
-<!-- Informe permissões exigidas, efeitos colaterais, rollback e riscos. -->
+## Security and Impact
+<!-- Describe required permissions, side effects, rollback, and risks. -->
 
-## Evidências
-<!-- Inclua logs, screenshots ou resultados relevantes, sem dados sensíveis. -->
+## Evidence
+<!-- Include relevant logs, screenshots, or results without sensitive data. -->

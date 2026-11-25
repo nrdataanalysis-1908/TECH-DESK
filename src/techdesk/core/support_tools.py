@@ -1,4 +1,4 @@
-"""Ferramentas adicionais de suporte Windows com comandos fixos e validação local."""
+"""Additional Windows support tools with fixed commands and local validation."""
 
 import hashlib
 import re
@@ -29,17 +29,17 @@ def _run(command: list[str], timeout: int = 120) -> SupportToolResult:
             errors="replace", timeout=timeout, check=False, shell=False,
         )
     except subprocess.TimeoutExpired:
-        return SupportToolResult(False, f"Tempo limite excedido ({timeout}s).")
+        return SupportToolResult(False, f"Timed out ({timeout}s).")
     except OSError as exc:
-        return SupportToolResult(False, f"Não foi possível iniciar: {exc}")
+        return SupportToolResult(False, f"Unable to start: {exc}")
     output = "\n".join(x.strip() for x in (result.stdout, result.stderr) if x.strip())
     if result.returncode == 0:
-        return SupportToolResult(True, "Operação concluída.", output[-12000:])
-    return SupportToolResult(False, f"Código de saída: {result.returncode}.", output[-12000:])
+        return SupportToolResult(True, "Operation completed.", output[-12000:])
+    return SupportToolResult(False, f"Exit code: {result.returncode}.", output[-12000:])
 
 
 def open_windows_tool(key: str) -> SupportToolResult:
-    """Abre somente ferramentas locais previamente autorizadas."""
+    """Opens only pre-authorized local tools."""
     commands = {
         "disk_cleanup": ["cleanmgr.exe"],
         "system_info": ["msinfo32.exe"],
@@ -50,29 +50,29 @@ def open_windows_tool(key: str) -> SupportToolResult:
         try:
             return SupportToolResult(
                 bool(webbrowser.open("https://www.speedtest.net", new=2)),
-                "Teste de velocidade aberto no navegador padrão."
+                "Speed test opened in the default browser."
             )
         except webbrowser.Error as exc:
-            return SupportToolResult(False, f"Não foi possível abrir o navegador: {exc}")
+            return SupportToolResult(False, f"Unable to open the browser: {exc}")
     if key not in commands:
-        raise ValueError(f"Ferramenta não autorizada: {key}")
+        raise ValueError(f"Ferramenta not authorized: {key}")
     try:
         subprocess.Popen(commands[key], shell=False)
     except OSError as exc:
-        return SupportToolResult(False, f"Não foi possível abrir a ferramenta: {exc}")
-    return SupportToolResult(True, "Ferramenta do Windows iniciada.")
+        return SupportToolResult(False, f"Unable to open the tool: {exc}")
+    return SupportToolResult(True, "Windows tool started.")
 
 
 def backup_event_logs(log_names: tuple[str, ...] = EVENT_LOGS) -> SupportToolResult:
-    """Exporta logs EVTX para pasta datada; nunca limpa os registros."""
+    """Exports EVTX logs to a dated folder; never clears the records."""
     if not log_names or any(name not in EVENT_LOGS for name in log_names):
-        raise ValueError("Conjunto de logs não autorizado.")
+        raise ValueError("Unauthorized log set.")
     stamp = datetime.now(UTC).strftime("%Y%m%d-%H%M%S")
     destination = Path.home() / "Documents" / "NRTech" / "TechDesk" / "EventBackups" / stamp
     try:
         destination.mkdir(parents=True, exist_ok=False)
     except OSError as exc:
-        return SupportToolResult(False, f"Não foi possível criar a pasta de backup: {exc}")
+        return SupportToolResult(False, f"Unable to create backup directory: {exc}")
     exported, failures = [], []
     for name in log_names:
         target = destination / f"{name}.evtx"
@@ -81,17 +81,17 @@ def backup_event_logs(log_names: tuple[str, ...] = EVENT_LOGS) -> SupportToolRes
             exported.append(name)
         else:
             failures.append(f"{name}: {result.message} {result.output}".strip())
-    summary = f"Backups exportados: {', '.join(exported) if exported else 'nenhum'}. Pasta: {destination}"
+    summary = f"Backups exported: {', '.join(exported) if exported else 'none'}. Directory: {destination}"
     if failures:
-        return SupportToolResult(False, summary + "\nFalhas: " + " | ".join(failures))
+        return SupportToolResult(False, summary + "\nFailures: " + " | ".join(failures))
     return SupportToolResult(True, summary)
 
 
 def clear_event_logs_after_backup() -> SupportToolResult:
-    """Faz backup de Application/Setup e só então limpa esses dois logs; Security é preservado."""
+    """Backs up Application/Setup before clearing those two logs; Security is preserved."""
     backup = backup_event_logs(("Application", "Setup"))
     if not backup.success:
-        return SupportToolResult(False, "Limpeza abortada: o backup prévio falhou.", backup.message)
+        return SupportToolResult(False, "Cleanup aborted: the backup failed.", backup.message)
     cleared, failures = [], []
     for name in ("Application", "Setup"):
         result = _run(["wevtutil.exe", "cl", name], timeout=60)
@@ -100,33 +100,33 @@ def clear_event_logs_after_backup() -> SupportToolResult:
         else:
             failures.append(f"{name}: {result.message} {result.output}".strip())
     message = (
-        f"Backup prévio realizado. Logs limpos: {', '.join(cleared) if cleared else 'nenhum'}. "
-        "O log Security foi preservado."
+        f"Backup completed. Cleared logs: {', '.join(cleared) if cleared else 'none'}. "
+        "The Security log was preserved."
     )
     if failures:
-        return SupportToolResult(False, message + "\nFalhas: " + " | ".join(failures), backup.message)
+        return SupportToolResult(False, message + "\nFailures: " + " | ".join(failures), backup.message)
     return SupportToolResult(True, message, backup.message)
 
 
 def top_memory_processes() -> SupportToolResult:
     script = (
         "Get-Process | Sort-Object WorkingSet64 -Descending | Select-Object -First 15 "
-        "Name, Id, CPU, @{N='MemoriaMB';E={[math]::Round($_.WorkingSet64/1MB,1)}} "
+        "Name, Id, CPU, @{N='MemoryMB';E={[math]::Round($_.WorkingSet64/1MB,1)}} "
         "| Format-Table -AutoSize"
     )
     return _run(["powershell.exe", "-NoProfile", "-NonInteractive", "-Command", script], 30)
 
 
 def close_process_gracefully(pid: int) -> SupportToolResult:
-    """Solicita fechamento pela janela principal; nunca força a terminação."""
+    """Requests shutdown through the main window; never forces termination."""
     if isinstance(pid, bool) or not isinstance(pid, int) or pid <= 0:
-        raise ValueError("PID inválido.")
+        raise ValueError("Invalid PID.")
     script = (
         f"$p=Get-Process -Id {pid} -ErrorAction Stop; "
         "if(-not $p.MainWindowHandle -or -not $p.CloseMainWindow()){ "
-        "Write-Output 'O processo não aceitou fechamento gracioso.'; exit 2 }; "
-        "if($p.WaitForExit(5000)){ Write-Output 'Processo encerrado normalmente.' } "
-        "else { Write-Output 'Solicitação enviada; processo continua em execução.'; exit 3 }"
+        "Write-Output 'The process did not accept a graceful shutdown.'; exit 2 }; "
+        "if($p.WaitForExit(5000)){ Write-Output 'Process exited normally.' } "
+        "else { Write-Output 'Request sent; process is still running.'; exit 3 }"
     )
     return _run(["powershell.exe", "-NoProfile", "-NonInteractive", "-Command", script], 15)
 
@@ -137,7 +137,7 @@ class _HTTPSOnlyRedirect(urllib.request.HTTPRedirectHandler):
             _parse_https_url(newurl)
         except ValueError as exc:
             raise urllib.error.HTTPError(
-                newurl, code, "Destino de redirecionamento HTTPS inválido", headers, fp
+                newurl, code, "Invalid HTTPS redirect destination", headers, fp
             ) from exc
         return super().redirect_request(req, fp, code, msg, headers, newurl)
 
@@ -148,18 +148,18 @@ def _parse_https_url(url: str) -> urllib.parse.ParseResult:
         not isinstance(url, str) or not url or url != url.strip()
         or any(ord(character) < 0x20 or ord(character) == 0x7F for character in url)
     ):
-        raise ValueError("URL deve ser uma string HTTPS sem espaços externos ou caracteres de controle.")
+        raise ValueError("URL must be an HTTPS string without surrounding whitespace or control characters.")
     try:
         parsed = urllib.parse.urlparse(url)
         port = parsed.port
     except ValueError as exc:
-        raise ValueError("URL HTTPS contém autoridade ou porta inválida.") from exc
+        raise ValueError("HTTPS URL contains an invalid authority or port.") from exc
     if (
         parsed.scheme.lower() != "https" or not parsed.hostname
         or parsed.username is not None or parsed.password is not None
         or port not in (None, 443)
     ):
-        raise ValueError("somente HTTPS na porta padrão, sem credenciais, é permitido.")
+        raise ValueError("Only HTTPS on the default port without credentials is allowed.")
     return parsed
 
 
@@ -181,11 +181,11 @@ def _safe_download_filename(raw_name: str) -> str:
 
 
 def download_https_file(url: str) -> SupportToolResult:
-    """Baixa arquivo HTTPS para Downloads, limita tamanho e calcula SHA-256; não executa o arquivo."""
+    """Downloads an HTTPS file to Downloads, enforces a size limit, and calculates SHA-256; never executes the file."""
     try:
         parsed = _parse_https_url(url)
     except ValueError as exc:
-        return SupportToolResult(False, f"URL inválida: {exc}")
+        return SupportToolResult(False, f"Invalid URL: {exc}")
     raw_name = Path(urllib.parse.unquote(parsed.path)).name
     filename = _safe_download_filename(raw_name)
     destination_dir = Path.home() / "Downloads"
@@ -209,31 +209,31 @@ def download_https_file(url: str) -> SupportToolResult:
             declared = response.headers.get("Content-Length")
             if declared is not None:
                 if not declared.strip().isdigit():
-                    raise ValueError("Content-Length retornado pelo servidor é inválido.")
+                    raise ValueError("Server returned an invalid Content-Length.")
                 if int(declared) > MAX_DOWNLOAD_BYTES:
-                    raise ValueError("Arquivo excede o limite de 100 MiB.")
+                    raise ValueError("File exceeds the 100 MiB limit.")
             while True:
                 chunk = response.read(1024 * 1024)
                 if not chunk:
                     break
                 total += len(chunk)
                 if total > MAX_DOWNLOAD_BYTES:
-                    raise ValueError("Download interrompido: limite de 100 MiB excedido.")
+                    raise ValueError("Download aborted: 100 MiB limit exceeded.")
                 stream.write(chunk)
                 digest.update(chunk)
         if declared is not None and total != int(declared):
             raise ValueError(
-                f"Content-Length divergente: esperado {int(declared)} bytes, recebidos {total}."
+                f"Content-Length mismatch: expected {int(declared)} bytes, received {total}."
             )
         if total == 0:
-            raise ValueError("O servidor retornou um arquivo vazio.")
+            raise ValueError("The server returned an empty file.")
         temporary.replace(destination)
         return SupportToolResult(
             True,
-            f"Download concluído: {destination}\nTamanho: {total} bytes\nSHA-256: {digest.hexdigest()}",
-            "O arquivo foi apenas salvo. O TECH DESK não o executa."
+            f"Download completed: {destination}\nSize: {total} bytes\nSHA-256: {digest.hexdigest()}",
+            "The file was saved only. TECH DESK does not execute it."
         )
     except (OSError, ValueError, urllib.error.URLError, urllib.error.HTTPError) as exc:
         if temporary and temporary.exists():
             temporary.unlink(missing_ok=True)
-        return SupportToolResult(False, f"Download não concluído: {exc}")
+        return SupportToolResult(False, f"Download failed: {exc}")
