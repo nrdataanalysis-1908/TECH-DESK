@@ -8,12 +8,12 @@ Build a modular IT support and management platform with distinct interfaces, a s
 
 ### Core (Python)
 
-Responsável por:
-- configuração e parâmetros de execução;
-- contratos e catálogo de operações;
-- validação de entrada e preconditions;
-- políticas de autorização;
-- logging, auditoria e tratamento uniforme de erros.
+Responsible for:
+- configuration and runtime parameters;
+- operation contracts and catalog;
+- input validation and preconditions;
+- authorization policies;
+- logging, auditing, and consistent error handling.
 
 ### Windows Adapters (PowerShell)
 
@@ -22,20 +22,20 @@ Integrate with native Windows capabilities: inventory, services, processes, netw
 ### Interfaces
 
 - CLI: primeira interface funcional.
-- Desktop: Tauri, para operação local.
-- Web: Next.js, para gestão e visualização centralizadas.
+- Desktop: Tauri for local operations.
+- Web: Next.js for centralized management and visualization.
 
 Interfaces consume shared contracts; they do not duplicate business logic.
 
 ### Agente local e API
 
-O agente local recebe solicitações autenticadas e executa exclusivamente operações previamente cadastradas. The web dashboard must never send free-form shell commands to the endpoint.
+The local agent receives authenticated requests and executes only pre-registered operations. The web dashboard must never send free-form shell commands to the endpoint.
 
-### Persistência
+### Persistence
 
-- SQLite: modo individual/local.
-- PostgreSQL: modo centralizado e multiusuário.
-- Logs operacionais: trilha de auditoria com retenção configurável.
+- SQLite: single-user/local mode.
+- PostgreSQL: centralized, multi-user mode.
+- Operational logs: audit trail with configurable retention.
 
 ## 3. Operation Workflow
 
@@ -73,11 +73,11 @@ Each operation must declare:
 
 ## 6. Technical Roadmap
 
-1. Fundação Python e CLI.
-2. Catálogo e contratos de operação.
-3. Inventário e diagnóstico read-only.
-4. Adaptadores de manutenção com confirmação.
-5. Persistência e auditoria.
+1. Python and CLI foundation.
+2. Operation catalog and contracts.
+3. Inventory and read-only diagnostics.
+4. Maintenance adapters with confirmation.
+5. Persistence and auditing.
 6. Desktop.
 7. API, agente e painel web.
-8. Assistência inteligente com explicabilidade e aprovação humana.
+8. Intelligent assistance with explainability and human approval.
