@@ -83,7 +83,7 @@ def _write_log(event: dict[str, object]) -> None:
 
 
 def clear_recycle_bin() -> OperationResult:
-    """Usa somente o mecanismo nativo; nunca remove arquivos internos de $Recycle.Bin."""
+    """Uses the native mechanism only; never removes internal $Recycle.Bin files."""
     script = (
         "$ErrorActionPreference = 'Stop'; "
         "try { Clear-RecycleBin -Force -ErrorAction Stop; exit 0 } "
@@ -100,7 +100,7 @@ def clear_recycle_bin() -> OperationResult:
 
 
 def run_maintenance() -> OperationResult:
-    """Executa TEMP e Lixeira, registrando sucesso parcial sem ocultar falhas."""
+    """Runs TEMP and Recycle Bin cleanup, recording partial success without hiding failures."""
     temp_result = _cleanup_temp()
     _write_log({
         "timestamp": datetime.now().astimezone().isoformat(timespec="seconds"),
@@ -128,7 +128,7 @@ def run_maintenance() -> OperationResult:
 
 
 def install_schedule() -> OperationResult:
-    """Registra ou atualiza as tarefas diárias 08h/18h para o usuário atual."""
+    """Registers or updates the daily 8 AM/6 PM tasks for the current user."""
     python_exe = str(Path(sys.executable).resolve())
     working_dir = str(Path(__file__).resolve().parents[2])
     script = (
