@@ -29,12 +29,12 @@ def _run(command: list[str], timeout: int = 120) -> SupportToolResult:
             errors="replace", timeout=timeout, check=False, shell=False,
         )
     except subprocess.TimeoutExpired:
-        return SupportToolResult(False, f"Tempo limite excedido ({timeout}s).")
+        return SupportToolResult(False, f"Timed out ({timeout}s).")
     except OSError as exc:
         return SupportToolResult(False, f"Não foi possível iniciar: {exc}")
     output = "\n".join(x.strip() for x in (result.stdout, result.stderr) if x.strip())
     if result.returncode == 0:
-        return SupportToolResult(True, "Operação concluída.", output[-12000:])
+        return SupportToolResult(True, "Operation completed.", output[-12000:])
     return SupportToolResult(False, f"Código de saída: {result.returncode}.", output[-12000:])
 
 
@@ -55,7 +55,7 @@ def open_windows_tool(key: str) -> SupportToolResult:
         except webbrowser.Error as exc:
             return SupportToolResult(False, f"Não foi possível abrir o navegador: {exc}")
     if key not in commands:
-        raise ValueError(f"Ferramenta não autorizada: {key}")
+        raise ValueError(f"Ferramenta not authorized: {key}")
     try:
         subprocess.Popen(commands[key], shell=False)
     except OSError as exc:
@@ -120,7 +120,7 @@ def top_memory_processes() -> SupportToolResult:
 def close_process_gracefully(pid: int) -> SupportToolResult:
     """Solicita fechamento pela janela principal; nunca força a terminação."""
     if isinstance(pid, bool) or not isinstance(pid, int) or pid <= 0:
-        raise ValueError("PID inválido.")
+        raise ValueError("Invalid PID.")
     script = (
         f"$p=Get-Process -Id {pid} -ErrorAction Stop; "
         "if(-not $p.MainWindowHandle -or -not $p.CloseMainWindow()){ "
