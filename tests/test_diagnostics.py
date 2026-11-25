@@ -19,9 +19,9 @@ def test_format_bytes_formats_gib():
 def test_collect_diagnostics_returns_expected_sections():
     report = collect_diagnostics()
     assert set(report) == {"system", "network", "storage"}
-    assert "operating_system" in report["sistema"]
-    assert "ip_addresses" in report["rede"]
-    assert "used_percentage" in report["armazenamento"]
+    assert "operating_system" in report["system"]
+    assert "ip_addresses" in report["network"]
+    assert "used_percentage" in report["storage"]
 
 
 def test_windows_catalog_contains_21_read_only_topics():
@@ -44,7 +44,7 @@ def test_unknown_diagnostic_is_rejected():
     except ValueError as exc:
         assert "Unknown" in str(exc)
     else:
-        raise AssertionError("A consulta desconhecida deveria ser rejeitada.")
+        raise AssertionError("Unknown diagnostics should be rejected.")
 
 
 def test_non_windows_diagnostic_is_not_executed():
