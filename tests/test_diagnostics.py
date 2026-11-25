@@ -18,10 +18,10 @@ def test_format_bytes_formats_gib():
 
 def test_collect_diagnostics_returns_expected_sections():
     report = collect_diagnostics()
-    assert set(report) == {"sistema", "rede", "armazenamento"}
-    assert "sistema_operacional" in report["sistema"]
-    assert "enderecos_ip" in report["rede"]
-    assert "percentual_utilizado" in report["armazenamento"]
+    assert set(report) == {"system", "network", "storage"}
+    assert "operating_system" in report["system"]
+    assert "ip_addresses" in report["network"]
+    assert "used_percentage" in report["storage"]
 
 
 def test_windows_catalog_contains_21_read_only_topics():
@@ -42,11 +42,11 @@ def test_unknown_diagnostic_is_rejected():
     try:
         run_windows_diagnostic("arbitrary-command")
     except ValueError as exc:
-        assert "desconhecido" in str(exc)
+        assert "Unknown" in str(exc)
     else:
-        raise AssertionError("A consulta desconhecida deveria ser rejeitada.")
+        raise AssertionError("Unknown diagnostics should be rejected.")
 
 
 def test_non_windows_diagnostic_is_not_executed():
     with patch("techdesk.core.diagnostics.platform.system", return_value="Linux"):
-        assert "somente no Windows" in run_windows_diagnostic("ipconfig")
+        assert "available on Windows only" in run_windows_diagnostic("ipconfig")
