@@ -35,7 +35,7 @@ def test_event_logs_are_not_cleared_when_backup_fails():
     with patch("techdesk.core.support_tools.backup_event_logs", return_value=SupportToolResult(False, "backup failed")), patch("techdesk.core.support_tools._run") as run:
         result = clear_event_logs_after_backup()
     assert not result.success
-    assert "abortada" in result.message
+    assert "aborted" in result.message
     run.assert_not_called()
 
 def test_event_log_cleanup_only_targets_application_and_setup_after_backup():
