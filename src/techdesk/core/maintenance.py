@@ -1,4 +1,4 @@
-"""Manutenção automatizada do endpoint Windows."""
+"""Automated Windows endpoint maintenance."""
 
 from __future__ import annotations
 
@@ -78,7 +78,7 @@ def _write_log(event: dict[str, object]) -> None:
         with json_log.open("a", encoding="utf-8") as stream:
             stream.write(json.dumps(event, ensure_ascii=False) + "\n")
     except OSError:
-        # A falha de log não deve interromper a manutenção do endpoint.
+        # A logging failure must not interrupt endpoint maintenance.
         pass
 
 
