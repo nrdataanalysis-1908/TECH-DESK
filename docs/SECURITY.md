@@ -1,43 +1,43 @@
-# Política de segurança
+# Security Policy
 
-## Princípio fundamental
+## Core Principle
 
-O TECH DESK administra endpoints. Uma falha de autorização ou validação pode causar indisponibilidade ou perda de dados. Segurança é requisito arquitetural, não funcionalidade acessória.
+TECH DESK manages endpoints. An authorization or validation failure can cause downtime or data loss. Security is an architectural requirement, not an ancillary feature.
 
-## Regras obrigatórias
+## Mandatory Rules
 
-- Não executar comandos arbitrários recebidos de interfaces remotas.
-- Usar allowlist de operações e parâmetros tipados.
-- Aplicar privilégio mínimo.
-- Solicitar confirmação antes de excluir dados, alterar configurações, reiniciar serviços ou interromper conectividade.
-- Validar sistema operacional, privilégios, caminhos e estado do recurso antes da execução.
-- Definir timeout e tratar códigos de saída.
-- Não armazenar senhas, tokens ou chaves em código, logs ou arquivos versionados.
-- Sanitizar parâmetros e saídas antes de registrar.
-- Registrar autor, operação, instante, resultado e identificador de correlação.
-- Disponibilizar modo de simulação/preview sempre que tecnicamente possível.
+- Never execute arbitrary commands received from remote interfaces.
+- Use an operation allowlist and typed parameters.
+- Enforce least privilege.
+- Require confirmation before deleting data, changing settings, restarting services, or interrupting connectivity.
+- Validate the operating system, privileges, paths, and resource state before execution.
+- Set timeouts and handle exit codes.
+- Never store passwords, tokens, or keys in code, logs, or version-controlled files.
+- Sanitize parameters and output before logging.
+- Record the actor, operation, timestamp, result, and correlation identifier.
+- Provide a simulation/preview mode whenever technically feasible.
 
-## Classificação sugerida
+## Suggested Classification
 
-| Nível | Natureza | Política |
+| Level | Nature | Policy |
 |---|---|---|
-| L0 | Consulta/read-only | Pode executar sem elevação |
-| L1 | Alteração reversível de baixo impacto | Confirmar conforme contexto |
-| L2 | Alteração relevante de sistema | Confirmação explícita e privilégio validado |
-| L3 | Ação destrutiva ou disruptiva | Confirmação reforçada, auditoria e plano de reversão |
+| L0 | Read-only query | May run without elevation |
+| L1 | Low-impact reversible change | Confirm as appropriate |
+| L2 | Significant system change | Explicit confirmation and validated privileges |
+| L3 | Destructive or disruptive action | Strong confirmation, audit trail, and rollback plan |
 
-## Comunicação remota
+## Remote Communication
 
-- TLS obrigatório.
-- Autenticação forte entre painel e agente.
-- Tokens com escopo e expiração.
-- Proteção contra replay e validação de origem.
-- Rate limiting e trilha de auditoria.
-- Nenhum endpoint de execução exposto publicamente sem autenticação.
+- TLS is mandatory.
+- Strong authentication between the dashboard and agent.
+- Scoped tokens with expiration.
+- Replay protection and origin validation.
+- Rate limiting and an audit trail.
+- No execution endpoint may be publicly exposed without authentication.
 
-## Reporte de vulnerabilidades
+## Vulnerability Reporting
 
-Não publique detalhes exploráveis de uma vulnerabilidade antes de coordenar sua correção. Abra uma issue privada ou utilize o canal de segurança configurado pelo mantenedor.
+Do not publish exploitable vulnerability details before coordinating a fix. Open a private issue or use the security channel configured by the maintainer.
 
 
 ## HTTPS download boundary
