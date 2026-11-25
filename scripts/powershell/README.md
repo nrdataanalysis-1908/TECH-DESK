@@ -6,7 +6,7 @@ Administrative routines will be implemented here as modular components.
 
 - Validate the Windows version and required privileges.
 - Accept explicit, strongly typed parameters.
-- Utilizar `SupportsShouldProcess` e `-WhatIf` quando aplicável.
+- Use `SupportsShouldProcess` and `-WhatIf` where applicable.
 - Return predictable exit codes.
 - Apply timeouts and exception handling.
 - Log start time, end time, duration, and result.
