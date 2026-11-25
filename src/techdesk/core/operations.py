@@ -33,118 +33,118 @@ class Operation:
 
 OPERATIONS = {
     "flush_dns": Operation(
-        "flush_dns", "Limpar cache DNS",
-        "Descarta o cache DNS local; novas consultas serão resolvidas novamente.",
-        "L1 — baixo impacto", True, 30,
+        "flush_dns", "Flush DNS cache",
+        "Clears the local DNS cache; subsequent queries will be resolved again.",
+        "L1 — low impact", True, 30,
     ),
     "cleanup_temp": Operation(
-        "cleanup_temp", "Limpar arquivos temporários",
-        "Remove todos os arquivos regulares da pasta TEMP do usuário, sem limite de idade. "
-        "Pastas e links simbólicos são preservados; arquivos bloqueados ou sem permissão são ignorados.",
-        "L2 — exclusão de arquivos", False, 120,
+        "cleanup_temp", "Clean temporary files",
+        "Removes all regular files from the user's TEMP directory, regardless of age. "
+        "Directories and symbolic links are preserved; locked or inaccessible files are skipped.",
+        "L2 — file deletion", False, 120,
     ),
     "restart_spooler": Operation(
-        "restart_spooler", "Reiniciar serviço de impressão",
-        "Interrompe e inicia o Spooler de Impressão; trabalhos pendentes podem ser afetados.",
-        "L2 — impacto em impressão", True, 60,
+        "restart_spooler", "Restart Print Spooler",
+        "Stops and starts the Print Spooler; pending jobs may be affected.",
+        "L2 — printing impact", True, 60,
     ),
     "sfc_scan": Operation(
-        "sfc_scan", "Verificar e reparar arquivos do Windows (SFC)",
-        "Executa sfc /scannow. Pode levar vários minutos.",
-        "L2 — reparo do sistema", True, 1800,
+        "sfc_scan", "Verify and repair Windows system files (SFC)",
+        "Runs sfc /scannow. This may take several minutes.",
+        "L2 — system repair", True, 1800,
     ),
     "dism_restore": Operation(
-        "dism_restore", "Reparar imagem do Windows (DISM)",
-        "Executa DISM /Online /Cleanup-Image /RestoreHealth. Pode levar bastante tempo "
-        "e utilizar Windows Update.",
-        "L2 — reparo do sistema", True, 3600,
+        "dism_restore", "Repair Windows image (DISM)",
+        "Runs DISM /Online /Cleanup-Image /RestoreHealth. This may take a while "
+        "and may use Windows Update.",
+        "L2 — system repair", True, 3600,
     ),
     "restart_explorer": Operation(
-        "restart_explorer", "Reiniciar Windows Explorer",
-        "Reinicia o shell da sessão atual; a barra de tarefas e a área de trabalho podem piscar.",
-        "L1 — reinício do shell", False, 30,
+        "restart_explorer", "Restart Windows Explorer",
+        "Restarts the current session shell; the taskbar and desktop may briefly flicker.",
+        "L1 — shell restart", False, 30,
     ),
     "clear_print_queue": Operation(
-        "clear_print_queue", "Esvaziar fila de impressão",
-        "Remove todos os trabalhos pendentes da fila local e reinicia o Spooler. "
-        "Trabalhos removidos não poderão ser impressos.",
-        "L3 — exclusão de trabalhos", True, 90,
+        "clear_print_queue", "Clear print queue",
+        "Removes all pending jobs from the local queue and restarts the Spooler. "
+        "Removed jobs cannot be printed.",
+        "L3 — job deletion", True, 90,
     ),
     "create_restore_point": Operation(
-        "create_restore_point", "Criar ponto de restauração",
-        "Solicita ao Windows um ponto de restauração antes de mudanças futuras. "
-        "Depende da Proteção do Sistema estar habilitada.",
-        "L1 — proteção preventiva", True, 120,
+        "create_restore_point", "Create restore point",
+        "Requests a Windows restore point before future changes. "
+        "Requires System Protection to be enabled.",
+        "L1 — preventive protection", True, 120,
     ),
     "check_disk": Operation(
-        "check_disk", "Verificar unidade do Windows",
-        "Executa CHKDSK online com /scan na unidade do sistema, sem agendar reinicialização.",
-        "L1 — verificação", True, 900,
+        "check_disk", "Scan Windows drive",
+        "Runs CHKDSK online with /scan on the system drive without scheduling a restart.",
+        "L1 — scan", True, 900,
     ),
     "renew_ip": Operation(
-        "renew_ip", "Renovar endereço IP (DHCP)",
-        "Solicita nova concessão DHCP; a conectividade pode oscilar durante a renovação.",
-        "L2 — impacto temporário na rede", True, 90,
+        "renew_ip", "Renew IP address (DHCP)",
+        "Requests a new DHCP lease; connectivity may briefly fluctuate during renewal.",
+        "L2 — temporary network impact", True, 90,
     ),
     "reset_winsock": Operation(
-        "reset_winsock", "Redefinir catálogo Winsock",
-        "Redefine o catálogo de rede do Windows. A reinicialização do computador é recomendada.",
-        "L3 — alteração de rede", True, 60,
+        "reset_winsock", "Reset Winsock catalog",
+        "Resets the Windows network catalog. Restarting the computer is recommended.",
+        "L3 — network change", True, 60,
     ),
     "empty_recycle_bin": Operation(
-        "empty_recycle_bin", "Esvaziar Lixeira",
-        "Exclui permanentemente os itens da Lixeira do usuário atual. Não é possível desfazer.",
-        "L3 — exclusão permanente", False, 120,
+        "empty_recycle_bin", "Empty Recycle Bin",
+        "Permanently deletes the current user's Recycle Bin items. This cannot be undone.",
+        "L3 — permanent deletion", False, 120,
     ),
     "restart_audio": Operation(
-        "restart_audio", "Reiniciar serviço de áudio",
-        "Reinicia o serviço de áudio do Windows; aplicativos em uso podem perder áudio por instantes.",
-        "L2 — impacto em áudio", True, 60,
+        "restart_audio", "Restart audio service",
+        "Restarts the Windows audio service; active applications may briefly lose audio.",
+        "L2 — audio impact", True, 60,
     ),
     "flush_arp": Operation(
-        "flush_arp", "Limpar cache ARP",
-        "Remove entradas dinâmicas do cache ARP; elas serão reaprendidas conforme a comunicação.",
-        "L1 — baixo impacto", True, 30,
+        "flush_arp", "Flush ARP cache",
+        "Removes dynamic entries from the ARP cache; they will be relearned as communication resumes.",
+        "L1 — low impact", True, 30,
     ),
     "quick_defender_scan": Operation(
-        "quick_defender_scan", "Executar verificação rápida do Defender",
-        "Inicia uma verificação rápida com o Microsoft Defender. O exame continua em segundo plano.",
-        "L1 — verificação de segurança", True, 120,
+        "quick_defender_scan", "Run Microsoft Defender quick scan",
+        "Starts a Microsoft Defender quick scan. The scan continues in the background.",
+        "L1 — scan de segurança", True, 120,
     ),
     "update_defender_signatures": Operation(
-        "update_defender_signatures", "Atualizar assinaturas do Defender",
-        "Solicita ao Microsoft Defender a atualização das definições de segurança.",
-        "L1 — atualização de segurança", True, 180,
+        "update_defender_signatures", "Update Microsoft Defender signatures",
+        "Requests a Microsoft Defender security intelligence update.",
+        "L1 — security update", True, 180,
     ),
     "restart_windows_update": Operation(
-        "restart_windows_update", "Reiniciar serviço Windows Update",
-        "Reinicia o serviço wuauserv; downloads ou instalações em andamento podem ser interrompidos.",
-        "L2 — impacto em atualizações", True, 90,
+        "restart_windows_update", "Restart Windows Update service",
+        "Restarts the wuauserv service; active downloads or installations may be interrupted.",
+        "L2 — update impact", True, 90,
     ),
     "clear_thumbnail_cache": Operation(
-        "clear_thumbnail_cache", "Reconstruir cache de miniaturas",
-        "Fecha temporariamente o Explorer, remove caches de miniaturas do usuário e reinicia o shell.",
-        "L2 — reinício do shell", False, 90,
+        "clear_thumbnail_cache", "Rebuild thumbnail cache",
+        "Temporarily closes Explorer, removes the user's thumbnail caches, and restarts the shell.",
+        "L2 — shell restart", False, 90,
     ),
     "update_group_policy": Operation(
-        "update_group_policy", "Atualizar políticas de grupo (GPO)",
-        "Executa gpupdate /force para atualizar políticas de usuário e computador.",
-        "L2 — alteração de políticas", True, 240,
+        "update_group_policy", "Update Group Policies (GPO)",
+        "Runs gpupdate /force to refresh user and computer policies.",
+        "L2 — policy change", True, 240,
     ),
     "backup_event_logs": Operation(
-        "backup_event_logs", "Exportar logs de eventos",
-        "Exporta Application, System, Setup e Security para arquivos EVTX em pasta datada.",
-        "L1 — backup de diagnóstico", True, 300,
+        "backup_event_logs", "Export event logs",
+        "Exports Application, System, Setup, and Security logs to EVTX files in a dated folder.",
+        "L1 — diagnostic backup", True, 300,
     ),
     "clear_event_logs": Operation(
-        "clear_event_logs", "Limpar logs Application e Setup (com backup)",
-        "Exporta Application e Setup antes da limpeza. O log Security nunca é apagado.",
-        "L3 — alteração de auditoria", True, 300,
+        "clear_event_logs", "Clear Application and Setup logs (with backup)",
+        "Exports Application and Setup before cleanup. The Security log is never cleared.",
+        "L3 — audit modification", True, 300,
     ),
     "winget_upgrade_all": Operation(
-        "winget_upgrade_all", "Atualizar aplicativos via Winget",
-        "Executa winget upgrade --all. Atualizações podem alterar versões e fechar aplicativos.",
-        "L2 — alteração de software", False, 3600,
+        "winget_upgrade_all", "Upgrade applications with Winget",
+        "Runs winget upgrade --all. Updates may change versions and close applications.",
+        "L2 — software change", False, 3600,
     ),
 
 }
@@ -183,7 +183,7 @@ def _audit(operation: str, result: str) -> None:
         with (audit_dir / "operations.jsonl").open("a", encoding="utf-8") as stream:
             stream.write(json.dumps(entry, ensure_ascii=False) + "\n")
     except OSError:
-        LOGGER.exception("Não foi possível gravar a auditoria da operação %s", operation)
+        LOGGER.exception("Unable to write audit record for operation %s", operation)
 
 
 def _output_encoding() -> str:
@@ -210,16 +210,16 @@ def _run(command: list[str], timeout: int) -> OperationResult:
             shell=False,
         )
     except subprocess.TimeoutExpired:
-        return OperationResult(False, f"Tempo limite excedido ({timeout}s).")
+        return OperationResult(False, f"Timed out ({timeout}s).")
     except OSError as exc:
-        return OperationResult(False, f"Não foi possível iniciar a operação: {exc}")
+        return OperationResult(False, f"Unable to start operation: {exc}")
 
     output = "\n".join(part.strip() for part in (completed.stdout, completed.stderr) if part.strip())
     if completed.returncode == 0:
-        return OperationResult(True, "Operação concluída.", output[-12000:])
+        return OperationResult(True, "Operation completed.", output[-12000:])
     return OperationResult(
         False,
-        f"Comando finalizado com código {completed.returncode}.",
+        f"Command finished with exit code {completed.returncode}.",
         output[-12000:],
     )
 
@@ -249,7 +249,7 @@ def _iter_temp_files(root: Path):
 
 
 def preview_temp_cleanup(now: datetime | None = None) -> tuple[int, int]:
-    """Conta todos os arquivos regulares elegíveis, sem limite de idade."""
+    """Conta todos os arquivos regulares eligible, sem limite de idade."""
     del now  # Mantido por compatibilidade com chamadas existentes.
     root = Path(tempfile.gettempdir()).resolve()
     count = total_bytes = 0
@@ -272,7 +272,7 @@ def _cleanup_temp() -> OperationResult:
             failed += 1
     return OperationResult(
         True,
-        f"Limpeza concluída: {removed} arquivo(s) removido(s), "
+        f"Limpeza concluída: {removed} file(s) removido(s), "
         f"{freed / (1024**2):.2f} MiB liberados; {failed} ignorado(s) por bloqueio/permissão.",
     )
 
@@ -283,19 +283,19 @@ def execute_operation(
 ) -> OperationResult:
     """Executa uma operação conhecida apenas após confirmação explícita."""
     if key not in OPERATIONS:
-        raise ValueError(f"Operação não autorizada: {key}")
+        raise ValueError(f"Operação not authorized: {key}")
     operation = OPERATIONS[key]
 
     if not is_windows():
-        return OperationResult(False, "Operações administrativas disponíveis somente no Windows.")
+        return OperationResult(False, "Operações administrativas disponíveis Windows only.")
     if not confirm(operation):
         _audit(key, "cancelled")
-        return OperationResult(False, "Operação cancelada pelo usuário.")
+        return OperationResult(False, "Operação cancelled pelo usuário.")
     if operation.requires_admin and not is_admin():
         _audit(key, "blocked_not_admin")
         return OperationResult(
             False,
-            "Esta operação exige PowerShell/terminal executado como Administrador. "
+            "Esta operação exige PowerShell/terminal executado como Administrator. "
             "Feche o TECH DESK e reabra-o com privilégios elevados.",
         )
 
