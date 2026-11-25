@@ -11,7 +11,7 @@
 
 ## Validation
 - [ ] Testes automatizados executados
-- [ ] `ruff check .` executado
+- [ ] `ruff check .` completed
 - [ ] Manual workflow validated on Windows (where applicable)
 - [ ] No arbitrary commands or `shell=True` usage were introduced
 
