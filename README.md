@@ -18,7 +18,7 @@ An intelligent support, diagnostics, and maintenance toolkit for Windows endpoin
 </div>
 
 <p align="center">
-  ![TECH DESK menu preview](https://raw.githubusercontent.com/nrdataanalysis-1908/TECH-DESK/main/docs/assets/techdesk-menu-english.svg)
+  <img src="https://raw.githubusercontent.com/nrdataanalysis-1908/TECH-DESK/main/docs/assets/techdesk-menu-english.svg" alt="TECH DESK menu preview" width="100%">
 </p>
 
 ## Overview
@@ -76,7 +76,7 @@ If the `techdesk` command is not recognized after installation, close and reopen
 ## Operational workflow
 
 <p align="center">
-  ![TECH DESK operational workflow](https://raw.githubusercontent.com/nrdataanalysis-1908/TECH-DESK/main/docs/assets/techdesk-flow.svg)
+  <img src="https://raw.githubusercontent.com/nrdataanalysis-1908/TECH-DESK/main/docs/assets/techdesk-flow.svg" alt="TECH DESK operational workflow" width="100%">
 </p>
 
 1. The technician selects an operation from the catalog or a read-only diagnostic.
