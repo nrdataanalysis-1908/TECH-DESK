@@ -144,7 +144,7 @@ def _show_diagnostics() -> None:
 
 
 def _pause_before_menu(input_fn: collections.abc.Callable[[str], str]) -> None:
-    """Keeps the result visible until the user chooses to return to the menu."""
+    """Keeps results visible until the user chooses to return to the menu."""
     try:
         input_fn("\nPress ENTER to return to the menu...")
     except (EOFError, KeyboardInterrupt):
