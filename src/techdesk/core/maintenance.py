@@ -1,4 +1,4 @@
-"""Manutenção automatizada do endpoint Windows."""
+"""Automated Windows endpoint maintenance."""
 
 from __future__ import annotations
 
@@ -12,8 +12,8 @@ from pathlib import Path
 from techdesk.core.operations import OperationResult, _cleanup_temp
 
 TASK_NAMES = (
-    "TECH DESK - Limpeza diaria 8h",
-    "TECH DESK - Limpeza diaria 18h",
+    "TECH DESK - Daily cleanup 8h",
+    "TECH DESK - Daily cleanup 18h",
 )
 
 
@@ -43,18 +43,18 @@ def _run_powershell(script: str, timeout: int = 60) -> OperationResult:
             shell=False,
         )
     except subprocess.TimeoutExpired:
-        return OperationResult(False, f"PowerShell excedeu o limite de {timeout}s.")
+        return OperationResult(False, f"PowerShell exceeded the timeout of {timeout}s.")
     except OSError as exc:
-        return OperationResult(False, f"Não foi possível iniciar o PowerShell: {exc}")
+        return OperationResult(False, f"Unable to start PowerShell: {exc}")
 
     output = "\n".join(
         part.strip() for part in (completed.stdout, completed.stderr) if part.strip()
     )
     if completed.returncode == 0:
-        return OperationResult(True, "Comando concluído.", output[-8000:])
+        return OperationResult(True, "Command completed.", output[-8000:])
     return OperationResult(
         False,
-        f"PowerShell retornou código {completed.returncode}.",
+        f"PowerShell returned exit code {completed.returncode}.",
         output[-8000:],
     )
 
@@ -78,12 +78,12 @@ def _write_log(event: dict[str, object]) -> None:
         with json_log.open("a", encoding="utf-8") as stream:
             stream.write(json.dumps(event, ensure_ascii=False) + "\n")
     except OSError:
-        # A falha de log não deve interromper a manutenção do endpoint.
+        # A logging failure must not interrupt endpoint maintenance.
         pass
 
 
 def clear_recycle_bin() -> OperationResult:
-    """Usa somente o mecanismo nativo; nunca remove arquivos internos de $Recycle.Bin."""
+    """Uses the native mechanism only; never removes internal $Recycle.Bin files."""
     script = (
         "$ErrorActionPreference = 'Stop'; "
         "try { Clear-RecycleBin -Force -ErrorAction Stop; exit 0 } "
@@ -91,16 +91,16 @@ def clear_recycle_bin() -> OperationResult:
     )
     result = _run_powershell(script, timeout=120)
     if result.success:
-        return OperationResult(True, "Lixeira processada pelo Windows.", result.output)
+        return OperationResult(True, "Recycle Bin processed by Windows.", result.output)
     return OperationResult(
         False,
-        "O Windows não conseguiu esvaziar a Lixeira. Nenhum metadado interno foi removido.",
+        "Windows could not empty the Recycle Bin. No internal metadata was removed.",
         result.output or result.message,
     )
 
 
 def run_maintenance() -> OperationResult:
-    """Executa TEMP e Lixeira, registrando sucesso parcial sem ocultar falhas."""
+    """Runs TEMP and Recycle Bin cleanup, recording partial success without hiding failures."""
     temp_result = _cleanup_temp()
     _write_log({
         "timestamp": datetime.now().astimezone().isoformat(timespec="seconds"),
@@ -118,7 +118,7 @@ def run_maintenance() -> OperationResult:
         "detail": recycle_result.output,
     })
 
-    message = f"TEMP: {temp_result.message}\nLixeira: {recycle_result.message}"
+    message = f"TEMP: {temp_result.message}\nRecycle Bin: {recycle_result.message}"
     output = recycle_result.output
     return OperationResult(
         temp_result.success and recycle_result.success,
@@ -128,7 +128,7 @@ def run_maintenance() -> OperationResult:
 
 
 def install_schedule() -> OperationResult:
-    """Registra ou atualiza as tarefas diárias 08h/18h para o usuário atual."""
+    """Registers or updates the daily 8 AM/6 PM tasks for the current user."""
     python_exe = str(Path(sys.executable).resolve())
     working_dir = str(Path(__file__).resolve().parents[2])
     script = (
@@ -141,18 +141,18 @@ def install_schedule() -> OperationResult:
         "-UserId ($env:USERDOMAIN + '\\' + $env:USERNAME) "
         "-LogonType Interactive -RunLevel Limited; "
         "foreach ($hour in @(8, 18)) { "
-        "$name = 'TECH DESK - Limpeza diaria ' + $hour + 'h'; "
+        "$name = 'TECH DESK - Daily cleanup ' + $hour + 'h'; "
         "$trigger = New-ScheduledTaskTrigger -Daily "
         "-At ([datetime]::Today.AddHours($hour)); "
         "Register-ScheduledTask -TaskName $name -Action $action "
         "-Trigger $trigger -Principal $principal -Force | Out-Null; "
-        "Write-Output ('Registrada: ' + $name) }"
+        "Write-Output ('Registered: ' + $name) }"
     )
     result = _run_powershell(script)
     return OperationResult(
         result.success,
-        "Agendamentos diários das 08h e 18h configurados." if result.success
-        else "Não foi possível configurar os agendamentos.",
+        "Daily schedules at 8 AM and 6 PM configured." if result.success
+        else "Unable to configure scheduled tasks.",
         result.output or result.message,
     )
 
@@ -164,11 +164,11 @@ def schedule_status() -> OperationResult:
         f"$names = @({names}); "
         "foreach ($name in $names) { "
         "$task = Get-ScheduledTask -TaskName $name -ErrorAction SilentlyContinue; "
-        "if ($null -eq $task) { Write-Output ($name + ': ausente') } "
+        "if ($null -eq $task) { Write-Output ($name + ': not found') } "
         "else { Write-Output ($task.TaskName + ': ' + $task.State) } }"
     )
     result = _run_powershell(script)
-    return OperationResult(result.success, "Estado dos agendamentos.", result.output)
+    return OperationResult(result.success, "Scheduled task status.", result.output)
 
 
 def remove_schedule() -> OperationResult:
@@ -179,12 +179,12 @@ def remove_schedule() -> OperationResult:
         "foreach ($name in $names) { "
         "Unregister-ScheduledTask -TaskName $name -Confirm:$false "
         "-ErrorAction SilentlyContinue; "
-        "Write-Output ('Removida, se existente: ' + $name) }"
+        "Write-Output ('Removed, if present: ' + $name) }"
     )
     result = _run_powershell(script)
     return OperationResult(
         result.success,
-        "Solicitação de remoção dos agendamentos concluída."
-        if result.success else "Falha ao remover os agendamentos.",
+        "Scheduled task removal request completed."
+        if result.success else "Failed to remove scheduled tasks.",
         result.output or result.message,
     )
