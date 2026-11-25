@@ -12,8 +12,8 @@ from pathlib import Path
 from techdesk.core.operations import OperationResult, _cleanup_temp
 
 TASK_NAMES = (
-    "TECH DESK - Daily cleanup 8h",
-    "TECH DESK - Daily cleanup 18h",
+    "TECH DESK - Daily cleanup 8 AM",
+    "TECH DESK - Daily cleanup 6 PM",
 )
 
 
@@ -141,7 +141,8 @@ def install_schedule() -> OperationResult:
         "-UserId ($env:USERDOMAIN + '\\' + $env:USERNAME) "
         "-LogonType Interactive -RunLevel Limited; "
         "foreach ($hour in @(8, 18)) { "
-        "$name = 'TECH DESK - Daily cleanup ' + $hour + 'h'; "
+        "$timeLabel = if ($hour -eq 8) { '8 AM' } else { '6 PM' }; "
+        "$name = 'TECH DESK - Daily cleanup ' + $timeLabel; "
         "$trigger = New-ScheduledTaskTrigger -Daily "
         "-At ([datetime]::Today.AddHours($hour)); "
         "Register-ScheduledTask -TaskName $name -Action $action "
