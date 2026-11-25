@@ -144,7 +144,7 @@ def _show_diagnostics() -> None:
 
 
 def _pause_before_menu(input_fn: collections.abc.Callable[[str], str]) -> None:
-    """Mantém o resultado visível até o usuário decidir retornar ao menu."""
+    """Keeps the result visible until the user chooses to return to the menu."""
     try:
         input_fn("\nPress ENTER to return to the menu...")
     except (EOFError, KeyboardInterrupt):
@@ -201,7 +201,7 @@ def _run_memory_operation(key: str, input_fn: collections.abc.Callable[[str], st
 
 
 def _memory_optimizer_menu(input_fn: collections.abc.Callable[[str], str]) -> None:
-    """Submenu guiado; ações de limpeza exigem confirmação individual."""
+    """Guided submenu; cleanup actions require individual confirmation."""
     while True:
         print("\n" + _paint("╔══════════════════════════════════════════════════════╗", BLUE))
         print(_paint("║                  MEMORY OPTIMIZER                  ║", CYAN))
