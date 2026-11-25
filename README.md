@@ -2,106 +2,105 @@
 
 # TECH DESK
 
-### NR TECH | CENTRAL DE GESTÃO E SUPORTE DE TI
+### NR TECH | IT MANAGEMENT & SUPPORT CENTER
 
-Central inteligente de suporte, diagnóstico e manutenção de endpoints Windows.
+An intelligent support, diagnostics, and maintenance toolkit for Windows endpoints.
 
 ![Python](https://img.shields.io/badge/Python-3.11+-2563EB?style=for-the-badge&logo=python&logoColor=white)
-![Windows](https://img.shields.io/badge/Sistema-Windows-2563EB?style=for-the-badge&logo=windows&logoColor=white)
+![Windows](https://img.shields.io/badge/Operating%20System-Windows-2563EB?style=for-the-badge&logo=windows&logoColor=white)
 [![PyPI version](https://img.shields.io/badge/PyPI-v0.1.0-2563EB?style=for-the-badge&logo=pypi&logoColor=white)](https://pypi.org/project/tech-desk/)
-[![PyPI downloads](https://img.shields.io/badge/downloads%2Fmonth-visualizar%20no%20PyPI-2563EB?style=for-the-badge&logo=pypi&logoColor=white)](https://pypi.org/project/tech-desk/)
-![CI](https://img.shields.io/badge/Integra%C3%A7%C3%A3o%20cont%C3%ADnua-Windows%20%7C%20Linux-0EA5E9?style=for-the-badge&logo=githubactions&logoColor=white)
-![License](https://img.shields.io/badge/Licen%C3%A7a-MIT-2563EB?style=for-the-badge)
+[![PyPI downloads](https://img.shields.io/badge/downloads%2Fmonth-view%20on%20PyPI-2563EB?style=for-the-badge&logo=pypi&logoColor=white)](https://pypi.org/project/tech-desk/)
+![CI](https://img.shields.io/badge/Continuous%20Integration-Windows%20%7C%20Linux-0EA5E9?style=for-the-badge&logo=githubactions&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-2563EB?style=for-the-badge)
 
-[Instalar pelo PyPI](https://pypi.org/project/tech-desk/) · [Última versão](https://github.com/nrdataanalysis-1908/TECH-DESK/releases/latest) · [Código-fonte](https://github.com/nrdataanalysis-1908/TECH-DESK)
+[Install from PyPI](https://pypi.org/project/tech-desk/) · [Latest release](https://github.com/nrdataanalysis-1908/TECH-DESK/releases/latest) · [Source code](https://github.com/nrdataanalysis-1908/TECH-DESK)
 
 </div>
 
 <p align="center">
-  <img src="docs/assets/techdesk-menu.svg" alt="Prévia visual do menu TECH DESK em azul e ciano" width="100%">
+  <img src="docs/assets/techdesk-menu.svg" alt="Visual preview of the TECH DESK menu in blue and cyan" width="100%">
 </p>
 
-## Visão geral
+## Overview
 
-O TECH DESK reúne rotinas de suporte técnico em uma CLI modular, com catálogo fechado de operações, confirmações explícitas, verificação de privilégios, timeout, captura de resultados e trilha de auditoria.
+TECH DESK brings IT support routines together in a modular CLI, with a closed operation catalog, explicit confirmations, privilege checks, timeouts, result capture, and an audit trail.
 
+## Quick installation
 
-## Instalação rápida
-
-O TECH DESK está publicado no Python Package Index (PyPI). Em um computador Windows com Python 3.11 ou superior, abra o PowerShell ou Prompt de Comando e execute:
+TECH DESK is published on the Python Package Index (PyPI). On a Windows computer with Python 3.11 or newer, open PowerShell or Command Prompt and run:
 
 ~~~powershell
 py -m pip install --upgrade tech-desk
 ~~~
 
-Depois, inicie a ferramenta com:
+Then start the tool with:
 
 ~~~powershell
 techdesk
 ~~~
 
-Pronto: o menu principal será exibido no terminal. Não é necessário clonar o repositório para utilizar a versão publicada.
+The main menu will appear in the terminal. Cloning the repository is not required to use the published version.
 
-Se o comando `techdesk` não for reconhecido após a instalação, feche e abra novamente o terminal. Caso persista, adicione ao PATH do usuário o diretório Scripts da instalação Python.
+If the `techdesk` command is not recognized after installation, close and reopen the terminal. If the issue persists, add the Python installation's Scripts directory to the user's PATH.
 
-- Projeto no PyPI: https://pypi.org/project/tech-desk/
-- Histórico de versões e arquivos: https://github.com/nrdataanalysis-1908/TECH-DESK/releases
-- Instalação de uma versão específica: `py -m pip install tech-desk==0.1.0`
+- PyPI project: https://pypi.org/project/tech-desk/
+- Release history and files: https://github.com/nrdataanalysis-1908/TECH-DESK/releases
+- Install a specific version: `py -m pip install tech-desk==0.1.0`
 
-## Recursos incorporados
+## Built-in capabilities
 
-### Operações de manutenção
+### Maintenance operations
 
-| Área | Recursos |
+| Area | Capabilities |
 |---|---|
-| Sistema | Limpeza completa dos arquivos elegíveis da TEMP do usuário, manutenção programada, SFC, DISM e CHKDSK online |
-| Rede | Limpeza DNS/ARP, renovação DHCP, redefinição Winsock e conectividade |
-| Impressão e periféricos | Reinício do Spooler, limpeza da fila e inventário USB |
-| Segurança | Microsoft Defender, atualização de assinaturas, verificação rápida e Firewall |
-| Windows | Reinício de Explorer/áudio/Windows Update, ponto de restauração e atualização GPO |
-| Logs | Backup EVTX de Application, System, Setup e Security; limpeza de Application/Setup somente após backup |
-| Aplicativos | Consulta de atualizações e atualização geral via Winget, mediante confirmação |
-| Memória | Inventário dos processos de maior consumo e solicitação de fechamento gracioso por PID |
+| System | Full cleanup of eligible files in the user's TEMP directory, scheduled maintenance, SFC, DISM, and online CHKDSK |
+| Network | DNS/ARP cleanup, DHCP renewal, Winsock reset, and connectivity checks |
+| Printing and peripherals | Spooler restart, queue cleanup, and USB inventory |
+| Security | Microsoft Defender, signature updates, quick scan, and Firewall |
+| Windows | Explorer/audio/Windows Update restart, restore point, and GPO refresh |
+| Logs | EVTX backup for Application, System, Setup, and Security; Application/Setup cleanup only after backup |
+| Applications | Update discovery and general updates through Winget, subject to confirmation |
+| Memory | Inventory of highest-memory processes and graceful close requests by PID |
 
-### Ferramentas e consultas
+### Tools and diagnostics
 
-- Informações avançadas do sistema (msinfo32).
-- Gerenciador de Dispositivos e Limpeza de Disco.
-- PowerShell aberto como ferramenta local, sem execução de comandos arbitrários pelo TECH DESK.
-- Teste de velocidade no navegador padrão.
-- Diagnóstico de CPU, memória, armazenamento, uptime, processos e serviços.
-- Inventário de software, USB, eventos e políticas de grupo.
-- Submenu de otimização de memória com ações individuais e sequência guiada, sempre com confirmação.
-- Download HTTPS limitado a 100 MiB, com redirecionamentos exclusivamente HTTPS e cálculo SHA-256. O arquivo é salvo, nunca executado pelo TECH DESK.
+- Advanced system information (msinfo32).
+- Device Manager and Disk Cleanup.
+- PowerShell opened as a local tool, without arbitrary command execution by TECH DESK.
+- Speed test in the default browser.
+- CPU, memory, storage, uptime, process, and service diagnostics.
+- Software, USB, event, and Group Policy inventory.
+- Memory optimization submenu with individual actions and a guided sequence, always requiring confirmation.
+- HTTPS downloads limited to 100 MiB, with HTTPS-only redirects and SHA-256 calculation. The file is saved, never executed by TECH DESK.
 
-## Fluxo operacional
+## Operational workflow
 
 <p align="center">
-  <img src="docs/assets/techdesk-flow.svg" alt="Fluxo operacional seguro do TECH DESK" width="100%">
+  <img src="docs/assets/techdesk-flow.svg" alt="Secure TECH DESK operational workflow" width="100%">
 </p>
 
-1. O técnico seleciona uma operação do catálogo ou uma consulta somente leitura.
-2. O TECH DESK apresenta escopo, risco e exigência de privilégio.
-3. Operações de alteração exigem confirmação textual explícita.
-4. O núcleo valida ambiente, privilégios e pré-condições.
-5. O executor chama somente comandos previamente definidos, sem shell intermediário e com timeout.
-6. O resultado é apresentado e os metadados da execução são gravados na auditoria local.
+1. The technician selects an operation from the catalog or a read-only diagnostic.
+2. TECH DESK displays scope, risk, and privilege requirements.
+3. Mutating operations require explicit textual confirmation.
+4. The core validates the environment, privileges, and preconditions.
+5. The executor invokes only predefined commands, without an intermediate shell and with a timeout.
+6. The result is displayed and execution metadata is written to the local audit log.
 
-## Controles de segurança
+## Security controls
 
-- Allowlist: não há execução de comandos arbitrários fornecidos pelo usuário.
-- Confirmação explícita antes de qualquer alteração.
-- Privilégio mínimo e bloqueio quando a elevação é necessária.
-- subprocess com shell=False, timeout e captura do código de saída.
-- Limpeza da TEMP remove arquivos regulares sem limite de idade; preserva diretórios e links/reparse points e ignora arquivos bloqueados ou sem permissão.
-- Limpeza de eventos exporta Application e Setup antes da exclusão; o log Security é preservado.
-- Fechamento de processos solicita encerramento gracioso; não utiliza encerramento forçado.
-- Download HTTPS sem execução automática, com limite de tamanho, validação de redirecionamento e SHA-256.
-- Auditoria JSONL local sem registrar a saída potencialmente sensível dos comandos.
+- Allowlist: arbitrary user-supplied commands are not executed.
+- Explicit confirmation before any change.
+- Least privilege and blocking when elevation is required.
+- subprocess with `shell=False`, timeout, and exit-code capture.
+- TEMP cleanup removes regular files regardless of age; preserves directories and links/reparse points and skips locked or inaccessible files.
+- Event cleanup exports Application and Setup before deletion; the Security log is preserved.
+- Process closing requests graceful termination; forced termination is not used.
+- HTTPS downloads do not execute automatically and enforce size limits, redirect validation, and SHA-256.
+- Local JSONL auditing without recording potentially sensitive command output.
 
-## Instalação para desenvolvimento
+## Development installation
 
-Para contribuir com o código-fonte, clone o repositório e instale as dependências de desenvolvimento:
+To contribute to the source code, clone the repository and install the development dependencies:
 
 ~~~powershell
 git clone https://github.com/nrdataanalysis-1908/TECH-DESK.git
@@ -112,9 +111,9 @@ python -m pip install --upgrade pip
 pip install -e ".[dev]"
 ~~~
 
-## Execução e diagnóstico
+## Execution and diagnostics
 
-Após a instalação para desenvolvimento, execute:
+After installing the development version, run:
 
 ~~~powershell
 python -m techdesk.cli
@@ -124,9 +123,9 @@ python -m techdesk.cli --diagnostic gpresult
 python -m techdesk.cli --diagnostic performance
 ~~~
 
-### Manutenção automatizada fora do menu
+### Automated maintenance outside the menu
 
-O TECH DESK também oferece manutenção por linha de comando e pelo atalho `TECH-DESK-Maintenance.bat`, sem abrir o menu principal. O módulo executa a limpeza da TEMP do usuário, tenta esvaziar a Lixeira pelo cmdlet nativo do Windows e registra resultados em `%LOCALAPPDATA%\\NRTech\\TechDesk\\logs`.
+TECH DESK also provides command-line maintenance and the `TECH-DESK-Maintenance.bat` shortcut, without opening the main menu. The module cleans the user's TEMP directory, attempts to empty the Recycle Bin through the native Windows cmdlet, and records results under `%LOCALAPPDATA%\\NRTech\\TechDesk\\logs`.
 
 ~~~powershell
 python -m techdesk.maintenance
@@ -135,44 +134,43 @@ python -m techdesk.maintenance --install-schedule
 python -m techdesk.maintenance --status
 ~~~
 
-O agendamento registra ou atualiza tarefas diárias às 08h e 18h para o usuário atual, sem elevação administrativa. A Lixeira é tratada como uma etapa independente: uma falha nativa é registrada como alerta e nenhum arquivo interno de `$Recycle.Bin` é removido manualmente.
+The scheduler registers or updates daily tasks at 08:00 and 18:00 for the current user, without administrative elevation. The Recycle Bin is handled as an independent step: a native failure is recorded as a warning, and no files inside `$Recycle.Bin` are manually removed.
 
-Abra o terminal como Administrador somente quando uma operação exigir elevação. O TECH DESK não tenta elevar privilégios silenciosamente.
+Run the terminal as Administrator only when an operation requires elevation. TECH DESK never attempts to elevate privileges silently.
 
-## Qualidade
+## Quality
 
-~~~powershell
+~~~
 pytest
 ruff check .
 ~~~
 
-O GitHub Actions executa testes e lint em Windows e Linux. CI verde não substitui validação funcional de cada rotina em uma máquina Windows real.
+GitHub Actions runs tests and linting on Windows and Linux. A green CI run does not replace functional validation of each routine on a real Windows machine.
 
-## Arquitetura atual
+## Current architecture
 
-- Core Python: catálogo, políticas, validações, execução e auditoria.
-- Adaptadores Windows: comandos nativos e PowerShell com argumentos fixos.
-- Interface atual: CLI.
-- Persistência: auditoria local JSONL.
-- Desktop Tauri, API web, agente local autenticado e PostgreSQL centralizado: evolução planejada, ainda não implementada.
+- Python core: catalog, policies, validation, execution, and auditing.
+- Windows adapters: native commands and PowerShell with fixed arguments.
+- Current interface: CLI.
+- Persistence: local JSONL audit log.
+- Tauri desktop app, web API, authenticated local agent, and centralized PostgreSQL: planned evolution, not yet implemented.
 
-## Distribuição e publicação
+## Distribution and publishing
 
-- Distribuição Python oficial: [PyPI — tech-desk](https://pypi.org/project/tech-desk/).
-- Código-fonte, issues e contribuições: [GitHub — TECH-DESK](https://github.com/nrdataanalysis-1908/TECH-DESK).
-- Versões e artefatos de lançamento: [GitHub Releases](https://github.com/nrdataanalysis-1908/TECH-DESK/releases).
+- Official Python distribution: [PyPI — tech-desk](https://pypi.org/project/tech-desk/).
+- Source code, issues, and contributions: [GitHub — TECH-DESK](https://github.com/nrdataanalysis-1908/TECH-DESK).
+- Releases and release artifacts: [GitHub Releases](https://github.com/nrdataanalysis-1908/TECH-DESK/releases).
 
-O GitHub Packages não é utilizado para esta distribuição: o registro nativo de pacotes Python é o PyPI. As versões publicadas no PyPI são imutáveis; novas correções e funcionalidades devem ser lançadas com um novo número de versão.
+GitHub Packages is not used for this distribution: the native Python package registry is PyPI. Published PyPI versions are immutable; new fixes and features must be released under a new version number.
 
-## Estado de validação
+## Validation status
 
-As rotinas possuem testes automatizados de catálogo, dispatch, cancelamento, privilégios e guardrails. A execução funcional em Windows real deve ser validada individualmente, especialmente operações que alteram serviços, logs, rede, aplicativos e arquivos.
+The routines have automated tests for catalog behavior, dispatch, cancellation, privileges, and guardrails. Functional execution on real Windows systems must be validated individually, especially for operations that change services, logs, network settings, applications, and files.
 
-## Licença
+## License
 
-MIT. Consulte LICENSE.
+MIT. See LICENSE.
 
+### Support downloads
 
-### Downloads de suporte
-
-O download de arquivos aceita somente HTTPS na porta padrão, valida redirecionamentos, verifica Content-Length quando fornecido, limita o arquivo a 100 MiB e calcula SHA-256. O TECH DESK apenas salva o conteúdo; não executa arquivos baixados.
+File downloads accept HTTPS only on the default port, validate redirects, check Content-Length when provided, enforce a 100 MiB limit, and calculate SHA-256. TECH DESK only saves the content; it does not execute downloaded files.
