@@ -1,4 +1,4 @@
-"""Diagnósticos locais somente para leitura e consultas fixas ao Windows."""
+"""Local read-only diagnostics and predefined Windows queries."""
 
 import os
 import platform
@@ -10,7 +10,7 @@ from typing import Any
 
 
 def _memory_bytes() -> tuple[int | None, int | None]:
-    """Retorna memória total e disponível em bytes, sem dependências externas."""
+    """Returns total and available memory in bytes without external dependencies."""
     if platform.system() == "Windows":
         try:
             import ctypes
@@ -64,46 +64,46 @@ def _network_addresses() -> str:
                 if item[4] and not item[4][0].startswith("127.")
             }
         )
-        return ", ".join(addresses) if addresses else "Nenhum IP não-loopback identificado"
+        return ", ".join(addresses) if addresses else "No non-loopback IP address found"
     except socket.gaierror:
-        return "Não foi possível resolver os endereços locais"
+        return "Unable to resolve local addresses"
 
 
 def collect_diagnostics() -> dict[str, dict[str, Any]]:
-    """Monta um relatório básico sem alterar configurações do endpoint."""
+    """Builds a basic report without changing endpoint settings."""
     total_memory, available_memory = _memory_bytes()
     disk = shutil.disk_usage(Path.home())
 
     return {
-        "sistema": {
-            "sistema_operacional": platform.system(),
-            "versao": platform.version(),
+        "system": {
+            "operating_system": platform.system(),
+            "version": platform.version(),
             "release": platform.release(),
             "arquitetura": platform.machine(),
-            "processador": platform.processor() or "Não identificado",
-            "nucleos_logicos": os.cpu_count(),
-            "memoria_total": _format_bytes(total_memory),
-            "memoria_disponivel": _format_bytes(available_memory),
+            "processor": platform.processor() or "Not identified",
+            "logical_cores": os.cpu_count(),
+            "total_memory": _format_bytes(total_memory),
+            "available_memory": _format_bytes(available_memory),
             "hostname": socket.gethostname(),
             "python": platform.python_version(),
         },
-        "rede": {
+        "network": {
             "hostname": socket.gethostname(),
-            "enderecos_ip": _network_addresses(),
+            "ip_addresses": _network_addresses(),
         },
-        "armazenamento": {
-            "unidade_analisada": str(Path.home()),
+        "storage": {
+            "analyzed_drive": str(Path.home()),
             "total": _format_bytes(disk.total),
-            "utilizado": _format_bytes(disk.used),
-            "livre": _format_bytes(disk.free),
-            "percentual_utilizado": (
+            "used": _format_bytes(disk.used),
+            "free": _format_bytes(disk.free),
+            "used_percentage": (
                 f"{(disk.used / disk.total) * 100:.1f}%" if disk.total else None
             ),
         },
     }
 
 
-# Scripts constantes: nenhuma entrada do usuário é interpolada ou executada.
+# Constant scripts: no user input is interpolated or executed.
 WINDOWS_DIAGNOSTICS: dict[str, str] = {
     "ipconfig": "ipconfig /all",
     "dns": "Get-DnsClientServerAddress | Format-Table -AutoSize",
@@ -125,7 +125,7 @@ WINDOWS_DIAGNOSTICS: dict[str, str] = {
     "battery": "Get-CimInstance Win32_Battery -ErrorAction SilentlyContinue | Format-List Name, Status, EstimatedChargeRemaining, BatteryStatus",
     "gpresult": "gpresult.exe /r",
     "winget": "winget.exe upgrade",
-    "performance": "$cpu=try{(Get-Counter '\\Processor(_Total)\\% Processor Time' -ErrorAction Stop).CounterSamples[0].CookedValue}catch{$null}; $os=Get-CimInstance Win32_OperatingSystem; $total=$os.TotalVisibleMemorySize; $free=$os.FreePhysicalMemory; Write-Output ('CPU: ' + $(if($null -ne $cpu){[math]::Round($cpu,1).ToString()+'%'}else{'indisponível'})); Write-Output ('RAM: ' + [math]::Round((($total-$free)/$total)*100,1) + '% utilizada (' + [math]::Round(($total-$free)/1MB,0) + ' / ' + [math]::Round($total/1MB,0) + ' MiB)')",
+    "performance": "$cpu=try{(Get-Counter '\\Processor(_Total)\\% Processor Time' -ErrorAction Stop).CounterSamples[0].CookedValue}catch{$null}; $os=Get-CimInstance Win32_OperatingSystem; $total=$os.TotalVisibleMemorySize; $free=$os.FreePhysicalMemory; Write-Output ('CPU: ' + $(if($null -ne $cpu){[math]::Round($cpu,1).ToString()+'%'}else{'unavailable'})); Write-Output ('RAM: ' + [math]::Round((($total-$free)/$total)*100,1) + '% utilizada (' + [math]::Round(($total-$free)/1MB,0) + ' / ' + [math]::Round($total/1MB,0) + ' MiB)')",
     "usb": "Get-PnpDevice -PresentOnly -ErrorAction SilentlyContinue | Where-Object InstanceId -Like 'USB*' | Select-Object -First 40 Status, Class, FriendlyName | Format-Table -AutoSize",
     "printers": "Get-Printer -ErrorAction SilentlyContinue | Format-Table Name, DriverName, PrinterStatus, Shared -AutoSize",
     "environment": "Get-ChildItem Env: | Sort-Object Name | Select-Object -ExpandProperty Name | Format-Table -AutoSize",
@@ -135,11 +135,11 @@ WINDOWS_DIAGNOSTICS: dict[str, str] = {
 
 
 def run_windows_diagnostic(topic: str) -> str:
-    """Executa uma consulta PowerShell predefinida, somente leitura e com timeout."""
+    """Runs a predefined, read-only PowerShell query with a timeout."""
     if topic not in WINDOWS_DIAGNOSTICS:
-        raise ValueError(f"Diagnóstico desconhecido: {topic}")
+        raise ValueError(f"Unknown diagnostic: {topic}")
     if platform.system() != "Windows":
-        return "Este diagnóstico está disponível somente no Windows."
+        return "This diagnostic is available on Windows only."
 
     command = [
         "powershell.exe",
@@ -160,14 +160,14 @@ def run_windows_diagnostic(topic: str) -> str:
             check=False,
         )
     except (OSError, subprocess.TimeoutExpired) as exc:
-        return f"Falha ao executar diagnóstico: {exc}"
+        return f"Failed to run diagnostic: {exc}"
 
     output = (result.stdout or "").strip()
     errors = (result.stderr or "").strip()
     if output and errors:
-        output += f"\n\nAvisos: {errors}"
+        output += f"\n\nWarnings: {errors}"
     elif errors and not output:
         output = errors
     if not output:
-        output = "Nenhum dado retornado."
+        output = "No data returned."
     return output[:16000]
