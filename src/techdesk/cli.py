@@ -37,55 +37,55 @@ GREEN = CYAN
 RESET = "\033[0m"
 
 MENU_GROUPS = {
-    "01  |  PAINEL DE SUPORTE TÉCNICO": [
-        ("1", "Limpeza de arquivos temporários", "operation:cleanup_temp"),
-        ("2", "Executar Limpeza de Disco (cleanmgr)", "tool:disk_cleanup"),
-        ("3", "Verificação de arquivos do sistema (SFC)", "operation:sfc_scan"),
-        ("4", "Reparo da imagem do Windows (DISM)", "operation:dism_restore"),
-        ("5", "Reiniciar serviço do Windows Update", "operation:restart_windows_update"),
-        ("6", "Redefinir catálogo de rede (Winsock)", "operation:reset_winsock"),
-        ("7", "Atualizar políticas de grupo (GPO)", "operation:update_group_policy"),
-        ("8", "Limpeza seletiva de logs de eventos", "operation:clear_event_logs"),
-        ("9", "Informações do sistema (msinfo32)", "tool:system_info"),
-        ("10", "Gerenciador de Dispositivos", "tool:device_manager"),
-        ("11", "Ver adaptadores de rede", "adapters"),
-        ("12", "Atualizar programas instalados via Winget", "operation:winget_upgrade_all"),
-        ("13", "Ver processos em execução", "processes"),
-        ("14", "Ver status dos principais serviços", "services"),
+    "01  |  IT SUPPORT DASHBOARD": [
+        ("1", "Clean temporary files", "operation:cleanup_temp"),
+        ("2", "Run Disk Cleanup (cleanmgr)", "tool:disk_cleanup"),
+        ("3", "Verify system files (SFC)", "operation:sfc_scan"),
+        ("4", "Repair Windows image (DISM)", "operation:dism_restore"),
+        ("5", "Restart Windows Update service", "operation:restart_windows_update"),
+        ("6", "Reset network catalog (Winsock)", "operation:reset_winsock"),
+        ("7", "Update Group Policies (GPO)", "operation:update_group_policy"),
+        ("8", "Selective event log cleanup", "operation:clear_event_logs"),
+        ("9", "System Information (msinfo32)", "tool:system_info"),
+        ("10", "Device Manager", "tool:device_manager"),
+        ("11", "View network adapters", "adapters"),
+        ("12", "Upgrade installed applications with Winget", "operation:winget_upgrade_all"),
+        ("13", "View running processes", "processes"),
+        ("14", "View key service status", "services"),
     ],
-    "02  |  CONSULTAS COMPLEMENTARES": [
-        ("15", "Resumo e diagnóstico do sistema", "sistema"),
-        ("16", "Armazenamento e espaço em disco", "armazenamento"),
-        ("17", "Configuração IP completa", "ipconfig"),
-        ("18", "Servidores DNS", "dns"),
-        ("19", "Teste de conectividade", "connectivity"),
-        ("20", "Status do Firewall", "firewall"),
-        ("21", "Status do Microsoft Defender", "defender"),
-        ("22", "Verificar atualizações disponíveis (Winget)", "winget"),
-        ("23", "Inventário de softwares instalados", "software"),
-        ("24", "Eventos críticos e erros do Windows", "events"),
-        ("25", "Inventário de dispositivos USB", "usb"),
-        ("26", "Processos com maior consumo de memória", "memory_processes"),
-        ("27", "Uso de CPU e memória em tempo real", "performance"),
+    "02  |  ADDITIONAL DIAGNOSTICS": [
+        ("15", "System summary and diagnostics", "system"),
+        ("16", "Storage and disk space", "storage"),
+        ("17", "Full IP configuration", "ipconfig"),
+        ("18", "DNS servers", "dns"),
+        ("19", "Connectivity test", "connectivity"),
+        ("20", "Firewall status", "firewall"),
+        ("21", "Microsoft Defender status", "defender"),
+        ("22", "Check for available updates (Winget)", "winget"),
+        ("23", "Installed software inventory", "software"),
+        ("24", "Critical Windows events and errors", "events"),
+        ("25", "USB device inventory", "usb"),
+        ("26", "Top memory-consuming processes", "memory_processes"),
+        ("27", "Real-time CPU and memory usage", "performance"),
     ],
-    "03  |  FERRAMENTAS ADICIONAIS": [
-        ("28", "Exportar logs de eventos (EVTX)", "operation:backup_event_logs"),
-        ("29", "Abrir PowerShell", "tool:powershell"),
-        ("30", "Teste de velocidade da internet", "tool:speedtest"),
-        ("31", "Baixar arquivo por HTTPS (sem executar)", "download_https"),
-        ("32", "Solicitar fechamento gracioso de processo", "close_process"),
-        ("33", "Otimizador de Memória (submenu)", "memory_optimizer"),
-        ("34", "Reiniciar Windows Explorer", "operation:restart_explorer"),
-        ("35", "Esvaziar Lixeira", "operation:empty_recycle_bin"),
+    "03  |  ADDITIONAL TOOLS": [
+        ("28", "Export event logs (EVTX)", "operation:backup_event_logs"),
+        ("29", "Open PowerShell", "tool:powershell"),
+        ("30", "Internet speed test", "tool:speedtest"),
+        ("31", "Download file over HTTPS (without execution)", "download_https"),
+        ("32", "Request graceful process shutdown", "close_process"),
+        ("33", "Memory Optimizer (submenu)", "memory_optimizer"),
+        ("34", "Restart Windows Explorer", "operation:restart_explorer"),
+        ("35", "Empty Recycle Bin", "operation:empty_recycle_bin"),
     ],
-    "04  |  MANUTENÇÃO AUTOMATIZADA": [
-        ("36", "Manutenção automática (TEMP + Lixeira + agenda)", "maintenance"),
+    "04  |  AUTOMATED MAINTENANCE": [
+        ("36", "Automated maintenance (TEMP + Recycle Bin + schedule)", "maintenance"),
     ],
 }
 
 
 def _enable_ansi() -> bool:
-    """Habilita sequências ANSI no console Windows moderno; falha de forma segura."""
+    """Enables ANSI sequences in modern Windows consoles; fails safely."""
     if not sys.stdout.isatty():
         return False
     if platform.system() != "Windows":
@@ -120,12 +120,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--diagnostics",
         action="store_true",
-        help="coleta e exibe diagnóstico local somente para leitura",
+        help="collects and displays a local read-only diagnostic report",
     )
     parser.add_argument(
         "--diagnostic",
         choices=sorted(WINDOWS_DIAGNOSTICS),
-        help="executa uma consulta Windows específica, somente para leitura",
+        help="runs a specific read-only Windows query",
     )
     return parser
 
@@ -134,7 +134,7 @@ def _show_section(title: str, values: dict[str, object]) -> None:
     print("\n" + _paint(title, BLUE))
     print("-" * 48)
     for label, value in values.items():
-        print(f"  {label:<22}: {value if value is not None else 'Não disponível'}")
+        print(f"  {label:<22}: {value if value is not None else 'Not available'}")
 
 
 def _show_diagnostics() -> None:
@@ -146,9 +146,9 @@ def _show_diagnostics() -> None:
 def _pause_before_menu(input_fn: collections.abc.Callable[[str], str]) -> None:
     """Mantém o resultado visível até o usuário decidir retornar ao menu."""
     try:
-        input_fn("\nPressione ENTER para retornar ao menu...")
+        input_fn("\nPress ENTER to return to the menu...")
     except (EOFError, KeyboardInterrupt):
-        print("\nRetornando ao menu.")
+        print("\nReturning to the menu.")
 
 
 def _show_menu() -> None:
@@ -156,9 +156,9 @@ def _show_menu() -> None:
     print(_paint("║                    TECH DESK  |  NR TECH                     ║", CYAN))
     print(_paint("║             IT MANAGEMENT & SUPPORT CENTER                   ║", BLUE))
     print(_paint("╚══════════════════════════════════════════════════════════════╝", CYAN))
-    print("  [CONSULTA]  Somente leitura")
-    print("  [EXECUÇÃO]  Altera o sistema após confirmação")
-    print("  [ADMIN]     Exige privilégios elevados")
+    print("  [CONSULTA]  Read-only")
+    print("  [EXECUÇÃO]  Changes the system after confirmation")
+    print("  [ADMIN]     Requires elevated privileges")
     for group, entries in MENU_GROUPS.items():
         print("\n" + _paint(group, BLUE))
         for number, label, topic in entries:
@@ -170,30 +170,30 @@ def _show_menu() -> None:
             else:
                 tag = "CONSULTA"
             print(_paint(f"  [{number:>2}] {label:<49} [{tag}]", CYAN))
-    print(_paint("\n  [ 0] Encerrar TECH DESK", BLUE))
+    print(_paint("\n  [ 0] Exit TECH DESK", BLUE))
 
 
 def _run_memory_operation(key: str, input_fn: collections.abc.Callable[[str], str]) -> None:
     operation = OPERATIONS[key]
-    print("\n" + _paint(f"OTIMIZADOR | {operation.title.upper()}", BLUE))
-    print(f"Risco: {operation.risk}")
+    print("\n" + _paint(f"OPTIMIZER | {operation.title.upper()}", BLUE))
+    print(f"Risk: {operation.risk}")
     print(operation.description)
     if key == "cleanup_temp":
         count, size = preview_temp_cleanup()
-        print(f"Prévia: {count} arquivo(s), {size / (1024**2):.2f} MiB elegíveis")
+        print(f"Preview: {count} file(s), {size / (1024**2):.2f} MiB eligible")
     try:
-        answer = input_fn("Para confirmar, digite SIM: ").strip().upper()
+        answer = input_fn("To confirm, type YES: ").strip().upper()
     except (EOFError, KeyboardInterrupt):
-        print("Operação cancelada.")
+        print("Operation cancelled.")
         return
     if answer != "SIM":
-        print("Operação cancelada.")
+        print("Operation cancelled.")
         return
     try:
         result = execute_operation(key, confirm=lambda _: True)
     except Exception:
-        logging.getLogger("techdesk").exception("Falha no otimizador: %s", key)
-        print(_paint("Falha inesperada. Consulte o log.", BLUE))
+        logging.getLogger("techdesk").exception("Optimizer failed: %s", key)
+        print(_paint("Unexpected failure. Check the log.", BLUE))
         return
     print(_paint(result.message, CYAN if result.success else BLUE))
     if result.output:
@@ -204,17 +204,17 @@ def _memory_optimizer_menu(input_fn: collections.abc.Callable[[str], str]) -> No
     """Submenu guiado; ações de limpeza exigem confirmação individual."""
     while True:
         print("\n" + _paint("╔══════════════════════════════════════════════════════╗", BLUE))
-        print(_paint("║              OTIMIZADOR DE MEMÓRIA                  ║", CYAN))
+        print(_paint("║              OPTIMIZER DE MEMÓRIA                  ║", CYAN))
         print(_paint("╚══════════════════════════════════════════════════════╝", BLUE))
-        print(_paint("[1] Ver processos com maior consumo de memória", CYAN))
-        print(_paint("[2] Solicitar fechamento gracioso por PID", CYAN))
-        print(_paint("[3] Limpar temporários antigos", CYAN))
-        print(_paint("[4] Esvaziar Lixeira", CYAN))
-        print(_paint("[5] Reiniciar Windows Explorer", CYAN))
-        print(_paint("[6] Otimização guiada (3, 4 e 5)", CYAN))
-        print(_paint("[0] Voltar ao menu principal", BLUE))
+        print(_paint("[1] View top memory-consuming processes", CYAN))
+        print(_paint("[2] Request graceful shutdown by PID", CYAN))
+        print(_paint("[3] Clean old temporary files", CYAN))
+        print(_paint("[4] Empty Recycle Bin", CYAN))
+        print(_paint("[5] Restart Windows Explorer", CYAN))
+        print(_paint("[6] Guided optimization (3, 4, and 5)", CYAN))
+        print(_paint("[0] Return to the main menu", BLUE))
         try:
-            choice = input_fn("Selecione uma opção: ").strip()
+            choice = input_fn("Select an option: ").strip()
         except (EOFError, KeyboardInterrupt):
             return
         if choice == "0":
@@ -226,19 +226,19 @@ def _memory_optimizer_menu(input_fn: collections.abc.Callable[[str], str]) -> No
         elif choice == "2":
             result = top_memory_processes()
             print(result.output)
-            raw_pid = input_fn("Informe o PID desejado: ").strip()
+            raw_pid = input_fn("Enter the target PID: ").strip()
             if not raw_pid.isdecimal() or int(raw_pid) <= 0:
-                print(_paint("PID inválido.", BLUE))
+                print(_paint("Invalid PID.", BLUE))
                 continue
             pid = int(raw_pid)
-            answer = input_fn(f"Solicitar fechamento normal do PID {pid}? Digite FECHAR: ").strip().upper()
+            answer = input_fn(f"Request normal shutdown of PID {pid}? Type CLOSE: ").strip().upper()
             if answer == "FECHAR":
                 result = close_process_gracefully(pid)
                 print(result.message)
                 if result.output:
                     print(result.output)
             else:
-                print("Ação cancelada.")
+                print("Action cancelled.")
         elif choice in {"3", "4", "5"}:
             key = {"3": "cleanup_temp", "4": "empty_recycle_bin", "5": "restart_explorer"}[choice]
             _run_memory_operation(key, input_fn)
@@ -246,52 +246,52 @@ def _memory_optimizer_menu(input_fn: collections.abc.Callable[[str], str]) -> No
             for key in ("cleanup_temp", "empty_recycle_bin", "restart_explorer"):
                 _run_memory_operation(key, input_fn)
         else:
-            print(_paint("Opção inválida.", BLUE))
+            print(_paint("Invalid option.", BLUE))
         try:
-            input_fn("Pressione ENTER para continuar...")
+            input_fn("Press ENTER to continue...")
         except (EOFError, KeyboardInterrupt):
             return
 
 
 def _maintenance_menu(input_fn: collections.abc.Callable[[str], str]) -> None:
     while True:
-        print("\n" + _paint("MANUTENÇÃO AUTOMATIZADA | TECH DESK", BLUE))
-        print("[1] Executar manutenção agora (TEMP + Lixeira)")
-        print("[2] Configurar agendamento diário (08h e 18h)")
-        print("[3] Consultar agendamentos")
-        print("[4] Remover agendamentos")
-        print("[0] Voltar ao menu principal")
+        print("\n" + _paint("AUTOMATED MAINTENANCE | TECH DESK", BLUE))
+        print("[1] Run maintenance now (TEMP + Recycle Bin)")
+        print("[2] Configure daily schedule (8 AM and 6 PM)")
+        print("[3] View scheduled tasks")
+        print("[4] Remove scheduled tasks")
+        print("[0] Return to the main menu")
         try:
-            choice = input_fn("Selecione uma opção: ").strip()
+            choice = input_fn("Select an option: ").strip()
         except (EOFError, KeyboardInterrupt):
             return
         if choice == "0":
             return
         if choice == "1":
-            if input_fn("Executar a manutenção agora? Digite SIM: ").strip().upper() != "SIM":
-                print("Operação cancelada.")
+            if input_fn("Run maintenance now? Type YES: ").strip().upper() != "SIM":
+                print("Operation cancelled.")
                 continue
             result = run_maintenance()
         elif choice == "2":
-            if input_fn("Registrar tarefas às 08h e 18h? Digite SIM: ").strip().upper() != "SIM":
-                print("Operação cancelada.")
+            if input_fn("Register tasks at 8 AM and 6 PM? Type YES: ").strip().upper() != "SIM":
+                print("Operation cancelled.")
                 continue
             result = install_schedule()
         elif choice == "3":
             result = schedule_status()
         elif choice == "4":
-            if input_fn("Remover as tarefas agendadas? Digite REMOVER: ").strip().upper() != "REMOVER":
-                print("Operação cancelada.")
+            if input_fn("Remove scheduled tasks? Type REMOVE: ").strip().upper() != "REMOVER":
+                print("Operation cancelled.")
                 continue
             result = remove_schedule()
         else:
-            print(_paint("Opção inválida.", YELLOW))
+            print(_paint("Invalid option.", YELLOW))
             continue
         print(_paint(result.message, CYAN if result.success else YELLOW))
         if result.output:
             print(result.output)
         try:
-            input_fn("Pressione ENTER para continuar...")
+            input_fn("Press ENTER to continue...")
         except (EOFError, KeyboardInterrupt):
             return
 
@@ -305,63 +305,63 @@ def _menu(input_fn: collections.abc.Callable[[str], str] = input) -> int:
     while True:
         _show_menu()
         try:
-            choice = input_fn("\nSelecione uma opção: ").strip()
+            choice = input_fn("\nSelect an option: ").strip()
         except (EOFError, KeyboardInterrupt):
-            print("\nEncerrando TECH DESK.")
+            print("\nExiting TECH DESK.")
             return 0
 
         if choice == "0":
-            print("TECH DESK encerrado.")
+            print("TECH DESK has exited.")
             return 0
         if choice not in actions:
-            print(_paint("Opção inválida. Tente novamente.", YELLOW))
+            print(_paint("Invalid option. Tente novamente.", YELLOW))
             continue
 
         label, topic = actions[choice]
-        if topic in {"sistema", "armazenamento"}:
+        if topic in {"system", "storage"}:
             report = collect_diagnostics()
-            if topic == "armazenamento":
-                _show_section(label.upper(), report["armazenamento"])
+            if topic == "storage":
+                _show_section(label.upper(), report["storage"])
             elif choice == "20":
                 _show_section(label.upper(), {
-                    key: report["sistema"][key]
-                    for key in ("processador", "nucleos_logicos", "memoria_total", "memoria_disponivel")
+                    key: report["system"][key]
+                    for key in ("processor", "logical_cores", "total_memory", "available_memory")
                 })
             else:
-                _show_section(label.upper(), report["sistema"])
+                _show_section(label.upper(), report["system"])
             _pause_before_menu(input_fn)
         elif topic.startswith("operation:"):
             operation_key = topic.split(":", 1)[1]
             operation = OPERATIONS[operation_key]
             print("\n" + "=" * 68)
-            print(_paint(f" CENTRAL DE EXECUÇÃO | {operation.title.upper()}", BLUE))
+            print(_paint(f" EXECUTION CENTER | {operation.title.upper()}", BLUE))
             print("=" * 68)
-            print(f" Ação             : {operation.title}")
-            print(f" Nível de risco   : {operation.risk}")
-            print(f" Privilégio       : {'Administrador' if operation.requires_admin else 'Usuário padrão'}")
-            print(f" O que será feito : {operation.description}")
+            print(f" Action            : {operation.title}")
+            print(f" Risk level        : {operation.risk}")
+            print(f" Privilege         : {'Administrator' if operation.requires_admin else 'Standard user'}")
+            print(f" Planned action    : {operation.description}")
             if operation_key == "cleanup_temp":
                 count, size = preview_temp_cleanup()
-                print(f" Prévia           : {count} arquivo(s), {size / (1024**2):.2f} MiB elegíveis")
+                print(f" Preview           : {count} file(s), {size / (1024**2):.2f} MiB eligible")
             print("-" * 68)
-            print(" Para executar, digite SIM. Qualquer outra resposta cancela.")
+            print(" To execute, type YES. Any other response cancels.")
             try:
-                answer = input_fn(" Confirmação: ").strip().upper()
+                answer = input_fn(" Confirmation: ").strip().upper()
             except (EOFError, KeyboardInterrupt):
-                print("\n Operação cancelada.", flush=True)
+                print("\n Operation cancelled.", flush=True)
                 continue
 
             if answer != "SIM":
                 execute_operation(operation_key, confirm=lambda _: False)
-                print(_paint("\n STATUS: CANCELADA — nenhuma ação foi executada.", YELLOW), flush=True)
+                print(_paint("\n STATUS: CANCELLED — no action was performed.", YELLOW), flush=True)
                 try:
-                    input_fn("\nPressione ENTER para retornar ao menu...")
+                    input_fn("\nPress ENTER to return to the menu...")
                 except (EOFError, KeyboardInterrupt):
                     pass
                 continue
 
             print("\n" + "=" * 68, flush=True)
-            print(_paint(" EXECUTANDO OPERAÇÃO — NÃO FECHE ESTA JANELA", YELLOW), flush=True)
+            print(_paint(" RUNNING OPERATION — DO NOT CLOSE THIS WINDOW", YELLOW), flush=True)
             print("=" * 68, flush=True)
             try:
                 result = execute_operation(operation_key, confirm=lambda _: True)
@@ -369,28 +369,28 @@ def _menu(input_fn: collections.abc.Callable[[str], str] = input) -> int:
                 logging.getLogger("techdesk").exception(
                     "Falha inesperada ao executar a operação %s", operation_key
                 )
-                print(_paint("\n STATUS: ERRO INTERNO — consulte o log do TECH DESK.", YELLOW), flush=True)
+                print(_paint("\n STATUS: INTERNAL ERROR — check the TECH DESK log.", YELLOW), flush=True)
                 try:
-                    input_fn("\nPressione ENTER para retornar ao menu...")
+                    input_fn("\nPress ENTER to return to the menu...")
                 except (EOFError, KeyboardInterrupt):
                     pass
                 continue
 
             print("\n" + "=" * 68)
             if result.success:
-                print(_paint(" STATUS FINAL: EXECUÇÃO CONCLUÍDA", GREEN))
+                print(_paint(" FINAL STATUS: EXECUTION COMPLETED", GREEN))
             else:
-                print(_paint(" STATUS FINAL: FALHA NA EXECUÇÃO", YELLOW))
-            print(f" Resultado: {result.message}")
+                print(_paint(" FINAL STATUS: EXECUTION FAILED", YELLOW))
+            print(f" Result: {result.message}")
             print("-" * 68)
             if result.output:
-                print(" SAÍDA DO COMANDO:")
+                print(" COMMAND OUTPUT:")
                 print(result.output)
             else:
-                print(" SAÍDA DO COMANDO: o Windows não retornou texto.")
+                print(" COMMAND OUTPUT: Windows returned no text.")
             print("=" * 68, flush=True)
             try:
-                input_fn("\nPressione ENTER para retornar ao menu...")
+                input_fn("\nPress ENTER to return to the menu...")
             except (EOFError, KeyboardInterrupt):
                 pass
         elif topic.startswith("tool:"):
@@ -399,17 +399,17 @@ def _menu(input_fn: collections.abc.Callable[[str], str] = input) -> int:
             if result.output:
                 print(result.output)
             try:
-                input_fn("\nPressione ENTER para retornar ao menu...")
+                input_fn("\nPress ENTER to return to the menu...")
             except (EOFError, KeyboardInterrupt):
                 pass
         elif topic == "download_https":
-            url = input_fn("\nInforme a URL HTTPS do arquivo: ").strip()
+            url = input_fn("\nEnter the file's HTTPS URL: ").strip()
             if not url:
-                print(_paint("Download cancelado: URL vazia.", YELLOW))
+                print(_paint("Download cancelled: empty URL.", YELLOW))
                 continue
-            answer = input_fn("Confirma baixar (limite 100 MiB, sem executar)? Digite BAIXAR: ").strip().upper()
+            answer = input_fn("Confirm download (100 MiB limit, no execution)? Type DOWNLOAD: ").strip().upper()
             if answer != "BAIXAR":
-                print("Download cancelado.")
+                print("Download cancelled.")
                 continue
             result = download_https_file(url)
             logging.getLogger("techdesk").info("Download HTTPS: %s", "success" if result.success else "failure")
@@ -417,14 +417,14 @@ def _menu(input_fn: collections.abc.Callable[[str], str] = input) -> int:
             if result.output:
                 print(result.output)
             try:
-                input_fn("\nPressione ENTER para retornar ao menu...")
+                input_fn("\nPress ENTER to return to the menu...")
             except (EOFError, KeyboardInterrupt):
                 pass
         elif topic == "memory_processes":
             result = top_memory_processes()
             print(f"\n{label}\n{result.message}\n{result.output}")
             try:
-                input_fn("\nPressione ENTER para retornar ao menu...")
+                input_fn("\nPress ENTER to return to the menu...")
             except (EOFError, KeyboardInterrupt):
                 pass
         elif topic == "memory_optimizer":
@@ -434,17 +434,17 @@ def _menu(input_fn: collections.abc.Callable[[str], str] = input) -> int:
         elif topic == "close_process":
             raw_pid = input_fn("\nInforme o PID exibido no inventário: ").strip()
             if not raw_pid.isdecimal() or int(raw_pid) <= 0:
-                print(_paint("PID inválido.", YELLOW))
+                print(_paint("Invalid PID.", YELLOW))
                 continue
             pid = int(raw_pid)
-            answer = input_fn(f"Solicitar fechamento normal do PID {pid}? Digite FECHAR: ").strip().upper()
+            answer = input_fn(f"Request normal shutdown of PID {pid}? Type CLOSE: ").strip().upper()
             if answer != "FECHAR":
-                print("Ação cancelada.")
+                print("Action cancelled.")
                 continue
             result = close_process_gracefully(pid)
             print(f"\n{result.message}\n{result.output}")
             try:
-                input_fn("\nPressione ENTER para retornar ao menu...")
+                input_fn("\nPress ENTER to return to the menu...")
             except (EOFError, KeyboardInterrupt):
                 pass
         elif topic in WINDOWS_DIAGNOSTICS:
@@ -453,7 +453,7 @@ def _menu(input_fn: collections.abc.Callable[[str], str] = input) -> int:
             print(run_windows_diagnostic(topic))
             _pause_before_menu(input_fn)
         else:
-            print(_paint("Diagnóstico não configurado.", YELLOW))
+            print(_paint("Diagnostic is not configured.", YELLOW))
             _pause_before_menu(input_fn)
 
 
@@ -464,7 +464,7 @@ def main() -> int:
     logging.getLogger("techdesk").info("TECH DESK iniciado")
 
     print(f"TECH DESK | NR TECH — {platform.system()} {platform.release()}")
-    print(_paint("Desenvolvido por Nadison Roberto | © 2026 NR TECH", CYAN))
+    print(_paint("Developed by Nadison Roberto | © 2026 NR TECH", CYAN))
     if args.diagnostics:
         _show_diagnostics()
         return 0
