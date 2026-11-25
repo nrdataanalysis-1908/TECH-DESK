@@ -18,7 +18,7 @@ An intelligent support, diagnostics, and maintenance toolkit for Windows endpoin
 </div>
 
 <p align="center">
-  <img src="docs/assets/techdesk-menu.svg" alt="Visual preview of the TECH DESK menu in blue and cyan" width="100%">
+  <img src="docs/assets/techdesk-menu-english.svg" alt="Visual preview of the TECH DESK menu in blue and cyan" width="100%">
 </p>
 
 ## Overview
