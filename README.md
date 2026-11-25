@@ -17,9 +17,7 @@ An intelligent support, diagnostics, and maintenance toolkit for Windows endpoin
 
 </div>
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/nrdataanalysis-1908/TECH-DESK/main/docs/assets/techdesk-menu-english.svg" alt="TECH DESK menu preview" width="100%">
-</p>
+![TECH DESK menu preview](docs/assets/techdesk-menu.svg)
 
 ## Overview
 
