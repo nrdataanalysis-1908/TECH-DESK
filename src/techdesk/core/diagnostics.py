@@ -1,4 +1,4 @@
-"""Diagnósticos locais somente para leitura e consultas fixas ao Windows."""
+"""Local read-only diagnostics and predefined Windows queries."""
 
 import os
 import platform
@@ -10,7 +10,7 @@ from typing import Any
 
 
 def _memory_bytes() -> tuple[int | None, int | None]:
-    """Retorna memória total e disponível em bytes, sem dependências externas."""
+    """Returns total and available memory in bytes without external dependencies."""
     if platform.system() == "Windows":
         try:
             import ctypes
@@ -70,7 +70,7 @@ def _network_addresses() -> str:
 
 
 def collect_diagnostics() -> dict[str, dict[str, Any]]:
-    """Monta um relatório básico sem alterar configurações do endpoint."""
+    """Builds a basic report without changing endpoint settings."""
     total_memory, available_memory = _memory_bytes()
     disk = shutil.disk_usage(Path.home())
 
@@ -135,7 +135,7 @@ WINDOWS_DIAGNOSTICS: dict[str, str] = {
 
 
 def run_windows_diagnostic(topic: str) -> str:
-    """Executa uma consulta PowerShell predefinida, somente leitura e com timeout."""
+    """Runs a predefined, read-only PowerShell query with a timeout."""
     if topic not in WINDOWS_DIAGNOSTICS:
         raise ValueError(f"Unknown diagnostic: {topic}")
     if platform.system() != "Windows":
