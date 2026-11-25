@@ -4,7 +4,7 @@
 
 Build a modular IT support and management platform with distinct interfaces, a shared core, and traceable operational execution.
 
-## 2. Componentes
+## 2. Components
 
 ### Core (Python)
 
@@ -27,7 +27,7 @@ Integrate with native Windows capabilities: inventory, services, processes, netw
 
 Interfaces consume shared contracts; they do not duplicate business logic.
 
-### Agente local e API
+### Local Agent and API
 
 The local agent receives authenticated requests and executes only pre-registered operations. The web dashboard must never send free-form shell commands to the endpoint.
 
