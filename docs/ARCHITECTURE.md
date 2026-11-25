@@ -21,7 +21,7 @@ Integrate with native Windows capabilities: inventory, services, processes, netw
 
 ### Interfaces
 
-- CLI: primeira interface funcional.
+- CLI: the first functional interface.
 - Desktop: Tauri for local operations.
 - Web: Next.js for centralized management and visualization.
 
