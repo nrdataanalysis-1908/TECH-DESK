@@ -125,7 +125,7 @@ WINDOWS_DIAGNOSTICS: dict[str, str] = {
     "battery": "Get-CimInstance Win32_Battery -ErrorAction SilentlyContinue | Format-List Name, Status, EstimatedChargeRemaining, BatteryStatus",
     "gpresult": "gpresult.exe /r",
     "winget": "winget.exe upgrade",
-    "performance": "$cpu=try{(Get-Counter '\\Processor(_Total)\\% Processor Time' -ErrorAction Stop).CounterSamples[0].CookedValue}catch{$null}; $os=Get-CimInstance Win32_OperatingSystem; $total=$os.TotalVisibleMemorySize; $free=$os.FreePhysicalMemory; Write-Output ('CPU: ' + $(if($null -ne $cpu){[math]::Round($cpu,1).ToString()+'%'}else{'unavailable'})); Write-Output ('RAM: ' + [math]::Round((($total-$free)/$total)*100,1) + '% utilizada (' + [math]::Round(($total-$free)/1MB,0) + ' / ' + [math]::Round($total/1MB,0) + ' MiB)')",
+    "performance": "$cpu=try{(Get-Counter '\\Processor(_Total)\\% Processor Time' -ErrorAction Stop).CounterSamples[0].CookedValue}catch{$null}; $os=Get-CimInstance Win32_OperatingSystem; $total=$os.TotalVisibleMemorySize; $free=$os.FreePhysicalMemory; Write-Output ('CPU: ' + $(if($null -ne $cpu){[math]::Round($cpu,1).ToString()+'%'}else{'unavailable'})); Write-Output ('RAM: ' + [math]::Round((($total-$free)/$total)*100,1) + '% used (' + [math]::Round(($total-$free)/1MB,0) + ' / ' + [math]::Round($total/1MB,0) + ' MiB)')",
     "usb": "Get-PnpDevice -PresentOnly -ErrorAction SilentlyContinue | Where-Object InstanceId -Like 'USB*' | Select-Object -First 40 Status, Class, FriendlyName | Format-Table -AutoSize",
     "printers": "Get-Printer -ErrorAction SilentlyContinue | Format-Table Name, DriverName, PrinterStatus, Shared -AutoSize",
     "environment": "Get-ChildItem Env: | Sort-Object Name | Select-Object -ExpandProperty Name | Format-Table -AutoSize",
