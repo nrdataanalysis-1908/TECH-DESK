@@ -20,9 +20,9 @@ def _interactive() -> int:
     while True:
         print("\nTECH DESK | MANUTENÇÃO AUTOMÁTICA")
         print("[1] Executar manutenção agora")
-        print("[2] Configurar agendamento diário (08h e 18h)")
-        print("[3] Consultar agendamentos")
-        print("[4] Remover agendamentos")
+        print("[2] Configure daily schedule (8 AM and 6 PM)")
+        print("[3] View scheduled tasks")
+        print("[4] Remove scheduled tasks")
         print("[0] Sair")
         try:
             choice = input("Selecione: ").strip()
@@ -33,23 +33,23 @@ def _interactive() -> int:
             return 0
         if choice == "1":
             if input("Executar limpeza de TEMP e Lixeira? Digite SIM: ").strip().upper() != "SIM":
-                print("Operação cancelada.")
+                print("Operation cancelled.")
                 continue
             result = run_maintenance()
         elif choice == "2":
-            if input("Registrar tarefas às 08h e 18h? Digite SIM: ").strip().upper() != "SIM":
-                print("Operação cancelada.")
+            if input("Register tasks at 8 AM and 6 PM? Type YES: ").strip().upper() != "SIM":
+                print("Operation cancelled.")
                 continue
             result = install_schedule()
         elif choice == "3":
             result = schedule_status()
         elif choice == "4":
             if input("Remover as duas tarefas agendadas? Digite REMOVER: ").strip().upper() != "REMOVER":
-                print("Operação cancelada.")
+                print("Operation cancelled.")
                 continue
             result = remove_schedule()
         else:
-            print("Opção inválida.")
+            print("Invalid option.")
             continue
         _show(result)
     return 0
