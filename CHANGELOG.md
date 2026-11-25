@@ -1,12 +1,12 @@
 # Changelog
 
-Todas as alterações relevantes do TECH DESK serão documentadas neste arquivo.
+All notable TECH DESK changes will be documented in this file.
 
-O projeto adota versionamento semântico (SemVer): MAJOR para mudanças incompatíveis, MINOR para funcionalidades compatíveis e PATCH para correções compatíveis.
+The project follows Semantic Versioning (SemVer): MAJOR for breaking changes, MINOR for backward-compatible features, and PATCH for backward-compatible fixes.
 
 ## [Unreleased]
 
 ### Added
-- Modelo padronizado para Pull Requests.
-- Diretrizes de contribuição e segurança.
-- Pipeline de release acionado por tags SemVer, com testes, lint, build das distribuições Python e publicação dos artefatos na GitHub Release.
+- Standardized Pull Request template.
+- Contribution and security guidelines.
+- Release pipeline triggered by SemVer tags, including tests, linting, Python distribution builds, and publication of artifacts to GitHub Releases.
