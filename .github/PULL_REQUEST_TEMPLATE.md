@@ -3,19 +3,19 @@
 
 ## Change Type
 - [ ] Bug fix
-- [ ] Nova funcionalidade
+- [ ] New feature
 - [ ] Security
 - [ ] Documentation
 - [ ] Refactoring
-- [ ] CI/CD ou empacotamento
+- [ ] CI/CD or packaging
 
 ## Validation
-- [ ] Testes automatizados executados
+- [ ] Automated tests executed
 - [ ] `ruff check .` completed
 - [ ] Manual workflow validated on Windows (where applicable)
 - [ ] No arbitrary commands or `shell=True` usage were introduced
 
-## Security e impacto
+## Security and Impact
 <!-- Describe required permissions, side effects, rollback, and risks. -->
 
 ## Evidence
