@@ -17,7 +17,7 @@ An intelligent support, diagnostics, and maintenance toolkit for Windows endpoin
 
 </div>
 
-![TECH DESK English menu preview](docs/assets/techdesk-menu-english.svg)
+![TECH DESK English menu preview](https://raw.githubusercontent.com/nrdataanalysis-1908/TECH-DESK/main/docs/assets/techdesk-menu-english.svg)
 
 ## Overview
 
