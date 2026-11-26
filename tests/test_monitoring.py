@@ -89,7 +89,6 @@ def test_collect_snapshot_rejects_negative_process_limit():
 def test_missing_optional_dependency_has_actionable_error(monkeypatch):
     import sys
 
-    monkeypatch.delitem(sys.modules, "psutil", raising=False)
-    monkeypatch.setattr("builtins.__import__", lambda name, *args, **kwargs: (_ for _ in ()).throw(ImportError()) if name == "psutil" else __import__(name, *args, **kwargs))
+    monkeypatch.setitem(sys.modules, "psutil", None)
     with pytest.raises(MonitoringDependencyError, match="tech-desk\[monitoring\]"):
         collect_snapshot()
